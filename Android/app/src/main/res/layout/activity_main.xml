@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="702dp"
+            android:id="@+id/linearLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.555">
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="83dp"
+                android:text="@string/morse_messenger"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                android:textSize="30sp" android:textColor="#000"
+                android:background="#888" android:paddingTop="20dp"
+                android:paddingLeft="16dp" android:id="@+id/textView2" app:layout_constraintTop_toTopOf="parent"
+                android:paddingRight="16dp"/>
+        <TextView
+                android:text="@string/dein_name"
+                android:layout_width="match_parent"
+                android:layout_height="35dp" android:id="@+id/textView3" android:textSize="24sp"
+                android:textColor="#000" android:layout_marginTop="20dp" android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"/>
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:id="@+id/editText" android:textColor="#000" android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:importantForAutofill="no"
+                android:hint="@string/name" tools:targetApi="o"/>
+        <Switch
+                android:text="@string/bluetooth"
+                android:layout_width="250dp"
+                android:layout_height="35dp" android:id="@+id/textView4" android:textSize="24sp"
+                android:textColor="#000" android:layout_marginTop="20dp" android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"/>
+        <ListView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:textColor="#000" android:layout_marginLeft="20dp" android:layout_marginRight="20dp"/>
+        <Button
+                android:text="@string/zum_chat"
+                android:layout_width="match_parent"
+                android:id="@+id/button" android:layout_height="68dp" android:layout_marginTop="20dp"
+                android:background="@drawable/border" android:textSize="22sp" android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
