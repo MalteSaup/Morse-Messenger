@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">Morse Messenger</string>
-    <string name="zum_chat">Zum Chat</string>
-    <string name="morse_messenger">Morse Messenger</string>
-    <string name="dein_name">Dein Name:</string>
-    <string name="bluetooth">Bluetooth:</string>
+
+    <!--Main Activity-->
+
+    <string name="dein_name">Dein Name</string>
+    <string name="bluetooth">Bluetooth</string>
     <string name="name">Name</string>
+    <string name="switchStatusOff">off</string>
+    <string name="switchStatusOn">on</string>
+    <string name="discoverDevices">Suche Geräte</string>
+    <string name="zum_chat">Zum Chat</string>
 </resources>
