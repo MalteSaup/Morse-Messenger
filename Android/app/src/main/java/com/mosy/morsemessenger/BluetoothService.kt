@@ -45,6 +45,7 @@ class BluetoothService (private val handler: Handler) {
     fun discover(){
         bluetoothAdapter?.startDiscovery()
     }
+
     private inner class ConnectThread(val device: BluetoothDevice) : Thread() {
         override fun run(){
             var fail = false

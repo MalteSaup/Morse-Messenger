@@ -45,7 +45,7 @@
             android:id="@+id/linearLayout">
         <Switch
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/switch1"
+                android:layout_height="wrap_content" android:id="@+id/bluetoothSwitch"
                 app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
                 android:switchMinWidth="70dp"
                 android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/bluetoothTV"/>
@@ -53,7 +53,7 @@
                 android:text="@string/switchStatusOff"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/onOffTV"
-                app:layout_constraintStart_toEndOf="@+id/switch1" android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@+id/bluetoothSwitch" android:layout_marginStart="8dp"
                 app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
                 app:layout_constraintHorizontal_bias="0.568"
                 app:layout_constraintTop_toBottomOf="@+id/bluetoothTV" android:layout_marginTop="16dp"
@@ -69,16 +69,17 @@
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp"
-    />
+            android:onClick="discoverPairedDevices"/>
     <android.support.v7.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp" app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/recyclerView"
+            android:id="@+id/devicesRV"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/chatBtn"
-            android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/searchBtn"/>
+            android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/searchBtn"
+            android:scrollbars="vertical"/>
     <Button
             android:text="@string/zum_chat"
             android:layout_width="match_parent"
@@ -88,7 +89,7 @@
             android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp" android:textColor="@color/colorTextW" android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView"/>
+            app:layout_constraintTop_toBottomOf="@+id/devicesRV"/>
 
 
 </android.support.constraint.ConstraintLayout>
