@@ -23,8 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var bluetoothService: BluetoothService? = null
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var devicesList : ArrayList<BluetoothDevice>
-    //TODO: beim Öffnen der App nicht sofort die Tastatur öffnen
-
+    private lateinit var btSwitch: Switch;
     fun initializeBluetoothService(){
         val handler = object: Handler() {
             override fun handleMessage(msg: Message) {
@@ -40,19 +39,39 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         //create LayoutManager
         devicesRV.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 
         devicesList = ArrayList()
         devicesAdapter = DevicesAdapter(devicesList)
         devicesRV.adapter = devicesAdapter
+
+        giveSwitchOnClickListener()
+
         //TODO: ItemClickListener auf RecyclerView implementieren
         initializeBluetoothService()
     }
 
     //TODO: On/Off mit Switch implementieren
-    fun bluetoothOn(view: View){
+
+    fun giveSwitchOnClickListener(){
+        btSwitch = findViewById(R.id.bluetoothSwitch);
+        btSwitch.setOnClickListener{
+            if(btSwitch.isChecked){
+                if (bluetoothService?.enabled == false) {
+                    val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+                }
+                onOffTV.text = "on"
+            }
+            else{
+                bluetoothService?.disable()
+                onOffTV.text = "off"
+            }
+        }
+    }
+
+    /*fun bluetoothOn(view: View){
         if (bluetoothService?.enabled == false) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
@@ -63,7 +82,7 @@ class MainActivity : AppCompatActivity() {
     fun bluetoothOff(view: View){
         bluetoothService?.disable()
         onOffTV.text = R.string.switchStatusOff as String
-    }
+    }*/
 
     fun showPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
@@ -106,10 +125,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun messageConnection(msg: Message){
-        if (msg.arg1 == 1)
-            Toast.makeText(applicationContext,"Connected to Device: ${msg.obj as String}", Toast.LENGTH_SHORT )
-        else
-            Toast.makeText(applicationContext,"Connection Failed", Toast.LENGTH_SHORT )
+        if (msg.arg1 == 1) {
+            Toast.makeText(applicationContext, "Connected to Device: ${msg.obj as String}", Toast.LENGTH_SHORT)
+        }
+        else {
+            Toast.makeText(applicationContext, "Connection Failed", Toast.LENGTH_SHORT)
+        }
     }
 
     private val deviceClickListener = object: AdapterView.OnItemClickListener {
