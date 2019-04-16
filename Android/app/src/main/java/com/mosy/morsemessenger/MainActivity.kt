@@ -24,17 +24,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var devicesList : ArrayList<BluetoothDevice>
     private lateinit var btSwitch: Switch;
-    fun initializeBluetoothService(){
-        val handler = object: Handler() {
-            override fun handleMessage(msg: Message) {
-                when(msg.what){
-                    MESSAGE_READ -> messageRead(msg)
-                    MESSAGE_CONNECTION -> messageConnection(msg)
-                }
-            }
-        }
-        bluetoothService = BluetoothService(handler)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,44 +35,59 @@ class MainActivity : AppCompatActivity() {
         devicesAdapter = DevicesAdapter(devicesList)
         devicesRV.adapter = devicesAdapter
 
-        giveSwitchOnClickListener()
-
-        //TODO: ItemClickListener auf RecyclerView implementieren
+        implementSwitchOnClickListener()
         initializeBluetoothService()
     }
 
-    //TODO: On/Off mit Switch implementieren
+    fun initializeBluetoothService(){
+        val handler = object: Handler() {
+            override fun handleMessage(msg: Message) {
+                when(msg.what){
+                    MESSAGE_READ -> messageRead(msg)
+                    MESSAGE_CONNECTION -> messageConnection(msg)
+                }
+            }
+        }
+        bluetoothService = BluetoothService(handler)
 
-    fun giveSwitchOnClickListener(){
+        //Check if Bluetooth is already enabled on device.
+        if (bluetoothService?.enabled == true) {
+            onOffTV.text = getString(R.string.switchStatusOn)
+            btSwitch.isChecked = true
+        }
+    }
+
+    //Listener for Switch-State-Change. To enable and disable bluetooth on device.
+    fun implementSwitchOnClickListener(){
         btSwitch = findViewById(R.id.bluetoothSwitch);
         btSwitch.setOnClickListener{
             if(btSwitch.isChecked){
-                if (bluetoothService?.enabled == false) {
-                    val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-                }
-                onOffTV.text = "on"
+                bluetoothOn()
             }
             else{
-                bluetoothService?.disable()
-                onOffTV.text = "off"
+                bluetoothOff()
             }
         }
     }
 
-    /*fun bluetoothOn(view: View){
+    //Turn Bluetooth On
+    fun bluetoothOn(){
         if (bluetoothService?.enabled == false) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
-        onOffTV.text = R.string.switchStatusOn as String
+        onOffTV.text = getString(R.string.switchStatusOn)
     }
 
-    fun bluetoothOff(view: View){
+    //Turn Bluetooth Off
+    fun bluetoothOff(){
         bluetoothService?.disable()
-        onOffTV.text = R.string.switchStatusOff as String
-    }*/
+        devicesList.clear()
+        devicesAdapter?.notifyDataSetChanged()
+        onOffTV.text = getString(R.string.switchStatusOff)
+    }
 
+    //TODO: Kommentar. was macht das?
     fun showPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
             for (device in bluetoothService?.pairedDevices!!)
@@ -96,14 +100,19 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "Bluetooth not on", Toast.LENGTH_SHORT).show()
     }
 
+    //Find Bluetooth-Devices and show them in List
     fun discoverPairedDevices(view: View){
-        bluetoothService?.discover()
-        Toast.makeText(baseContext, "Discovering Paired Devices", Toast.LENGTH_SHORT).show()
-        devicesList.clear()
-        devicesAdapter?.notifyDataSetChanged()
-        registerReceiver(blReceiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
+        if (bluetoothService?.enabled!!) {
+            bluetoothService?.discover()
+            Toast.makeText(baseContext, "Discovering Paired Devices", Toast.LENGTH_SHORT).show()
+            devicesList.clear()
+            devicesAdapter?.notifyDataSetChanged()
+            registerReceiver(blReceiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
+        } else
+            Toast.makeText(applicationContext, "Bluetooth not on", Toast.LENGTH_SHORT).show()
     }
 
+    //TODO: Kommentar. was macht das?
     private val blReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
@@ -133,6 +142,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //Click-Listener for Device in Devices-RecyclerView. To create connection with Bluetooth-Device.
     private val deviceClickListener = object: AdapterView.OnItemClickListener {
         override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
             Toast.makeText(applicationContext, "Connecting", Toast.LENGTH_SHORT).show()
@@ -141,7 +151,6 @@ class MainActivity : AppCompatActivity() {
             val macAddress = info.substring(info.length - 17)
             bluetoothService?.connect(macAddress)
         }
-
     }
 
     //TODO: ONClick für "Zum Chat"-Button (hier starten der neuen Activity (oder evtl doch Fragment?))
