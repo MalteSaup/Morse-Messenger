@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         onOffTV.text = getString(R.string.switchStatusOff)
     }
 
-    //TODO: Kommentar. was macht das?
+    //Shows Bluetooth-Devices in List
     fun showPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
             for (device in bluetoothService?.pairedDevices!!)
@@ -125,6 +125,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //TODO: Kommentar. was macht das?
     fun messageRead(msg: Message){
         try {
             //textViewMessage.text = msg.obj as String
@@ -133,6 +134,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //TODO: Kommentar. was macht das?
     fun messageConnection(msg: Message){
         if (msg.arg1 == 1) {
             Toast.makeText(applicationContext, "Connected to Device: ${msg.obj as String}", Toast.LENGTH_SHORT)
@@ -153,10 +155,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //TODO: ONClick für "Zum Chat"-Button (hier starten der neuen Activity (oder evtl doch Fragment?))
-    //funktioniert nur, wenn Name ausgefüllt und Bluetooth-Verbindung zu einem Device steht
+    //Click-Listener for toChat-Button. Starts the ChatActivity.
+    fun implementChatBtnClickListener(view: View) {
+
+        //Can only open new Activity, when nameET is filled and bluetooth-device is connected
+        //TODO !nameET.text.equals("") funktioniert irgendwie nicht
+        if (!nameET.text.equals("") && bluetoothService?.enabled!! /*TODO: && Verbindung zu Gerät ist hergestellt)*/) {
+            val intent = Intent(this, ChatActivity::class.java)
+            startActivity(intent)
+        }
 
 
+    }
+    //TODO: ItemClickListener auf RecyclerView implementieren
     /*fun onClick (view: View) {
         val itemPos = devicesRV.getChildLayoutPosition(view)
         val item = devicesList.get(itemPos) as String

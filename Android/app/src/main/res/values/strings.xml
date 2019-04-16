@@ -3,11 +3,15 @@
 
     <!--Main Activity-->
 
-    <string name="dein_name">Dein Name</string>
+    <string name="your_name">Dein Name</string>
     <string name="bluetooth">Bluetooth</string>
     <string name="name">Name</string>
     <string name="switchStatusOff">off</string>
     <string name="switchStatusOn">on</string>
     <string name="discoverDevices">Suche Geräte</string>
-    <string name="zum_chat">Zum Chat</string>
+    <string name="to_chat">Zum Chat</string>
+
+    <!--Chat Activity-->
+    <string name="sendMessage">Senden</string>
+
 </resources>

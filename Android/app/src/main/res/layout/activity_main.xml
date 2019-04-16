@@ -8,7 +8,7 @@
         android:focusableInTouchMode="true"
         tools:context=".MainActivity" android:id="@+id/constraintMain" android:background="@color/colorPrimary">
     <TextView
-            android:text="@string/dein_name"
+            android:text="@string/your_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content" android:id="@+id/nameTV" android:textSize="24sp"
             android:textColor="@color/colorTextW"
@@ -81,7 +81,7 @@
             android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/searchBtn"
             android:scrollbars="vertical"/>
     <Button
-            android:text="@string/zum_chat"
+            android:text="@string/to_chat"
             android:layout_width="match_parent"
             android:id="@+id/chatBtn" android:layout_height="wrap_content"
             android:background="@drawable/buttonshape" android:textSize="20sp"
@@ -89,7 +89,7 @@
             android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="16dp" android:textColor="@color/colorTextW" android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/devicesRV"/>
+            app:layout_constraintTop_toBottomOf="@+id/devicesRV" android:onClick="implementChatBtnClickListener"/>
 
 
 </android.support.constraint.ConstraintLayout>
