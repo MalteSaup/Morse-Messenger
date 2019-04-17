@@ -6,14 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import kotlinx.android.synthetic.main.bluetooth_list_item.view.*
 
-class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>) :
+class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>, val clickListener: (BluetoothDevice) -> Unit) :
     RecyclerView.Adapter<DevicesAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val device : BluetoothDevice = devicesList[position]
-        holder?.nameTV?.text = device.name
-        holder?.macTV?.text = device.address
+        holder.bind(devicesList[position], clickListener)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,7 +25,11 @@ class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>) :
     }
 
     class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nameTV = itemView.findViewById(R.id.deviceNameTV) as TextView
-        val macTV = itemView.findViewById(R.id.deviceMacTV) as TextView
+        fun bind (device : BluetoothDevice, clickListener: (BluetoothDevice) -> Unit) {
+            itemView.deviceNameTV.text = device.name
+            itemView.deviceMacTV.text = device.address.toString()
+            itemView.setOnClickListener{clickListener (device)}
+        }
+
     }
 }

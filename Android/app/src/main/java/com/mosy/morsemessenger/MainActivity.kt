@@ -21,18 +21,16 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var devicesAdapter: DevicesAdapter
     private var bluetoothService: BluetoothService? = null
-    private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var devicesList : ArrayList<BluetoothDevice>
     private lateinit var btSwitch: Switch;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //create LayoutManager
-        devicesRV.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 
+        devicesRV.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         devicesList = ArrayList()
-        devicesAdapter = DevicesAdapter(devicesList)
+        devicesAdapter = DevicesAdapter(devicesList, {device : BluetoothDevice -> onDeviceClicked(device)})
         devicesRV.adapter = devicesAdapter
 
         implementSwitchOnClickListener()
@@ -75,6 +73,9 @@ class MainActivity : AppCompatActivity() {
         if (bluetoothService?.enabled == false) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+
+            /*Wenn man den Switch auf an stellt, wird ein Dialog gezeigt (Zulassen/Ablehnen)
+            * TODO: Wenn man auf Ablehnen klickt, muss der Switch wieder auf off gestellt werden */
         }
         onOffTV.text = getString(R.string.switchStatusOn)
     }
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     fun bluetoothOff(){
         bluetoothService?.disable()
         devicesList.clear()
-        devicesAdapter?.notifyDataSetChanged()
+        devicesAdapter.notifyDataSetChanged()
         onOffTV.text = getString(R.string.switchStatusOff)
     }
 
@@ -93,23 +94,23 @@ class MainActivity : AppCompatActivity() {
             for (device in bluetoothService?.pairedDevices!!)
                 devicesList.add(device)
             // add the name to the list
-            devicesAdapter?.notifyItemInserted(devicesList.size -1)
+            devicesAdapter.notifyItemInserted(devicesList.size -1)
 
-            Toast.makeText(applicationContext, "Show Paired Devices", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Zeige Geräte", Toast.LENGTH_SHORT).show()
         } else
-            Toast.makeText(applicationContext, "Bluetooth not on", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Bluetooth ist aus", Toast.LENGTH_SHORT).show()
     }
 
     //Find Bluetooth-Devices and show them in List
     fun discoverPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
             bluetoothService?.discover()
-            Toast.makeText(baseContext, "Discovering Paired Devices", Toast.LENGTH_SHORT).show()
+            Toast.makeText(baseContext, "Suche Geräte", Toast.LENGTH_SHORT).show()
             devicesList.clear()
-            devicesAdapter?.notifyDataSetChanged()
+            devicesAdapter.notifyDataSetChanged()
             registerReceiver(blReceiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
         } else
-            Toast.makeText(applicationContext, "Bluetooth not on", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Bluetooth ist aus", Toast.LENGTH_SHORT).show()
     }
 
     //TODO: Kommentar. was macht das?
@@ -120,7 +121,7 @@ class MainActivity : AppCompatActivity() {
                 val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
                 devicesList.add(device)
                 // add the name to the list
-                devicesAdapter?.notifyItemInserted(devicesList.size -1)
+                devicesAdapter.notifyItemInserted(devicesList.size -1)
             }
         }
     }
@@ -137,44 +138,28 @@ class MainActivity : AppCompatActivity() {
     //TODO: Kommentar. was macht das?
     fun messageConnection(msg: Message){
         if (msg.arg1 == 1) {
-            Toast.makeText(applicationContext, "Connected to Device: ${msg.obj as String}", Toast.LENGTH_SHORT)
+            Toast.makeText(applicationContext, "Verbindung aufbauen: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
         }
         else {
-            Toast.makeText(applicationContext, "Connection Failed", Toast.LENGTH_SHORT)
+            Toast.makeText(applicationContext, "Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show()
         }
     }
 
     //Click-Listener for Device in Devices-RecyclerView. To create connection with Bluetooth-Device.
-    private val deviceClickListener = object: AdapterView.OnItemClickListener {
-        override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-            Toast.makeText(applicationContext, "Connecting", Toast.LENGTH_SHORT).show()
-
-            val info = (view as TextView).text
-            val macAddress = info.substring(info.length - 17)
-            bluetoothService?.connect(macAddress)
-        }
+    private fun onDeviceClicked (device : BluetoothDevice) {
+        // Get the device MAC address
+        val macAddress = device.address
+        Toast.makeText(applicationContext, "Connecting: ${device.name}", Toast.LENGTH_SHORT).show()
+        bluetoothService?.connect(macAddress)
     }
 
     //Click-Listener for toChat-Button. Starts the ChatActivity.
     fun implementChatBtnClickListener(view: View) {
-
         //Can only open new Activity, when nameET is filled and bluetooth-device is connected
-        //TODO !nameET.text.equals("") funktioniert irgendwie nicht
-        if (!nameET.text.equals("") && bluetoothService?.enabled!! /*TODO: && Verbindung zu Gerät ist hergestellt)*/) {
+        if (!nameET.text.isBlank() && bluetoothService?.enabled!! /*TODO: && Verbindung zu Gerät ist hergestellt)*/) {
             val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)
         }
-
-
+        else Toast.makeText(applicationContext, "Name und/oder Geräteverbindung fehlt", Toast.LENGTH_SHORT).show()
     }
-    //TODO: ItemClickListener auf RecyclerView implementieren
-    /*fun onClick (view: View) {
-        val itemPos = devicesRV.getChildLayoutPosition(view)
-        val item = devicesList.get(itemPos) as String
-        // Get the device MAC address, which is the last 17 chars in the View
-        val info = (view as TextView).text
-        val macAddress = info.substring(info.length - 17)
-        Toast.makeText(applicationContext, "Connecting", Toast.LENGTH_SHORT).show()
-        bluetoothService?.connect(macAddress)
-    }*/
 }
