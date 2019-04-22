@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         onOffTV.text = getString(R.string.switchStatusOff)
     }
 
-    //Shows Bluetooth-Devices in List
+    //Shows Bluetooth-Devices in list, which have already been connected in the past
     fun showPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
             for (device in bluetoothService?.pairedDevices!!)

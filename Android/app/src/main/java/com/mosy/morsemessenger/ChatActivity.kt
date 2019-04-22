@@ -28,6 +28,9 @@ class ChatActivity : AppCompatActivity() {
             var message: Message = Message(0, text)
             var message2: Message = Message(1, "HUHUUUUUUUUUUUUUUUUUUUUUUUUUU")
 
+            //TODO: Message aus text an Arduino senden
+            sendTextToOtherDevice(text)
+
             //scrolls recyclerView to the bottom
             chatBox.smoothScrollToPosition(messageList.size);
 
@@ -45,6 +48,19 @@ class ChatActivity : AppCompatActivity() {
 
     }
 
+
+    fun sendTextToOtherDevice(text: String) {
+        //stackoverflow.com/questions/5030150/passing-a-bluetooth-connection-to-a-new-activity
+        // stackoverflow.com/questions/22573301/how-to-pass-a-handler-from-activity-to-service
+        //stackoverflow.com/questions/17568470/holding-android-bluetooth-connection-through-multiple-activities
+        //stackoverflow.com/questions/40308008/pass-the-bluetooth-connection-between-activities-in-android-studio
+        //github.com/socketio/socket.io-client-java/issues/219
+
+
+        //github.com/sunsided/android-bluetoothspp/blob/master/src/de/widemeadows/android/bluetoothspptest/BluetoothService.java
+        // developer.android.com/guide/topics/connectivity/bluetooth
+        //de.wikibooks.org/wiki/Googles_Android/_Bluetooth
+    }
 
 }
 
