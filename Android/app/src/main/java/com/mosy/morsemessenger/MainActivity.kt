@@ -1,14 +1,13 @@
 package com.mosy.morsemessenger
 
+import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -20,14 +19,34 @@ import java.io.UnsupportedEncodingException
 class MainActivity : AppCompatActivity() {
 
     private lateinit var devicesAdapter: DevicesAdapter
-    private var bluetoothService: BluetoothService? = null
     private lateinit var devicesList : ArrayList<BluetoothDevice>
     private lateinit var btSwitch: Switch;
+    private var myService: BluetoothConnectionService? = null
+    private var isBound = false
+
+    private val myConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName,
+                                        service: IBinder
+        ) {
+            val binder = service as BluetoothConnectionService.MyLocalBinder
+            myService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            isBound = false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val intent = Intent(applicationContext, BluetoothConnectionService::class.java)
+        if(!isServiceRunning(BluetoothConnectionService::class.java)){
+            startService(intent)
 
+        }
+        bindService(intent, myConnection, Context.BIND_AUTO_CREATE)
         devicesRV.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         devicesList = ArrayList()
         devicesAdapter = DevicesAdapter(devicesList, {device : BluetoothDevice -> onDeviceClicked(device)})
@@ -36,20 +55,23 @@ class MainActivity : AppCompatActivity() {
         implementSwitchOnClickListener()
         initializeBluetoothService()
     }
+    fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
-    fun initializeBluetoothService(){
-        val handler = object: Handler() {
-            override fun handleMessage(msg: Message) {
-                when(msg.what){
-                    MESSAGE_READ -> messageRead(msg)
-                    MESSAGE_CONNECTION -> messageConnection(msg)
-                }
+        // Loop through the running services
+        for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                // If the service is running then return true
+                return true
             }
         }
-        bluetoothService = BluetoothService(handler)
+        return false
+    }
+    fun initializeBluetoothService(){
+
 
         //Check if Bluetooth is already enabled on device.
-        if (bluetoothService?.enabled == true) {
+        if (myService?.bluetoothService?.enabled == true) {
             onOffTV.text = getString(R.string.switchStatusOn)
             btSwitch.isChecked = true
         }
@@ -70,7 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     //Turn Bluetooth On
     fun bluetoothOn(){
-        if (bluetoothService?.enabled == false) {
+        if (myService?.bluetoothService?.enabled == false) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
 
@@ -82,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
     //Turn Bluetooth Off
     fun bluetoothOff(){
-        bluetoothService?.disable()
+        myService?.bluetoothService?.disable()
         devicesList.clear()
         devicesAdapter.notifyDataSetChanged()
         onOffTV.text = getString(R.string.switchStatusOff)
@@ -90,8 +112,8 @@ class MainActivity : AppCompatActivity() {
 
     //Shows Bluetooth-Devices in list, which have already been connected in the past
     fun showPairedDevices(view: View){
-        if (bluetoothService?.enabled!!) {
-            for (device in bluetoothService?.pairedDevices!!)
+        if (myService?.bluetoothService?.enabled!!) {
+            for (device in myService?.bluetoothService?.pairedDevices!!)
                 devicesList.add(device)
             // add the name to the list
             devicesAdapter.notifyItemInserted(devicesList.size -1)
@@ -103,8 +125,8 @@ class MainActivity : AppCompatActivity() {
 
     //Find Bluetooth-Devices and show them in List
     fun discoverPairedDevices(view: View){
-        if (bluetoothService?.enabled!!) {
-            bluetoothService?.discover()
+        if (myService?.bluetoothService?.enabled!!) {
+            myService?.bluetoothService?.discover()
             Toast.makeText(baseContext, "Suche Geräte", Toast.LENGTH_SHORT).show()
             devicesList.clear()
             devicesAdapter.notifyDataSetChanged()
@@ -126,37 +148,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //TODO: Kommentar. was macht das?
-    fun messageRead(msg: Message){
-        try {
-            //textViewMessage.text = msg.obj as String
-        } catch (e: UnsupportedEncodingException) {
-            e.printStackTrace()
-        }
-    }
-
-    //TODO: Kommentar. was macht das?
-    fun messageConnection(msg: Message){
-        if (msg.arg1 == 1) {
-            Toast.makeText(applicationContext, "Verbindung aufbauen: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
-        }
-        else {
-            Toast.makeText(applicationContext, "Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     //Click-Listener for Device in Devices-RecyclerView. To create connection with Bluetooth-Device.
     private fun onDeviceClicked (device : BluetoothDevice) {
         // Get the device MAC address
         val macAddress = device.address
         Toast.makeText(applicationContext, "Connecting: ${device.name}", Toast.LENGTH_SHORT).show()
-        bluetoothService?.connect(macAddress)
+        myService?.bluetoothService?.connect(macAddress)
     }
 
     //Click-Listener for toChat-Button. Starts the ChatActivity.
     fun implementChatBtnClickListener(view: View) {
         //Can only open new Activity, when nameET is filled and bluetooth-device is connected
-        if (!nameET.text.isBlank() && bluetoothService?.enabled!! /*TODO: && Verbindung zu Gerät ist hergestellt)*/) {
+        if (!nameET.text.isBlank() && myService?.bluetoothService?.enabled!! /*TODO: && Verbindung zu Gerät ist hergestellt)*/) {
             val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)
         }
