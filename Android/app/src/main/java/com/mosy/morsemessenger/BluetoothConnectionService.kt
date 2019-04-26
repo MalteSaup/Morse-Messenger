@@ -6,6 +6,7 @@ import android.os.Binder
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
+import android.util.Log
 import android.widget.Toast
 import java.io.UnsupportedEncodingException
 
@@ -14,6 +15,7 @@ class BluetoothConnectionService : Service() {
 
     var bluetoothService: BluetoothService? = null
     private val mBinder = MyLocalBinder()
+
 
     inner class MyLocalBinder : Binder() {
         fun getService() : BluetoothConnectionService? {
@@ -27,7 +29,6 @@ class BluetoothConnectionService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Toast.makeText(applicationContext, "Gestartet", Toast.LENGTH_SHORT).show()
-        bluetoothService = BluetoothService(handler)
         return super.onStartCommand(intent, flags, startId)
     }
     val handler = object: Handler() {
@@ -40,6 +41,18 @@ class BluetoothConnectionService : Service() {
     }
 
 
+    fun getId() : String? {
+        return bluetoothService?.getId()
+    }
+
+    fun setBt(bluetoothService: BluetoothService?){
+        this.bluetoothService = bluetoothService
+        Log.d("TEST", """${this.bluetoothService?.getId() as String}OFF""")
+    }
+
+    fun getBt(): BluetoothService? {
+        return bluetoothService
+    }
     //TODO: Kommentar. was macht das?
     fun messageRead(msg: Message){
         try {
