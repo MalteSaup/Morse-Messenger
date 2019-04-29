@@ -79,8 +79,9 @@ class ChatActivity : AppCompatActivity() {
             //own id: 0, id of other chat-member: 1
             var message: Message = Message(0, text)
             //var message2: Message = Message(1, bluetoothService?.getId() as String)
-            //TODO: Message aus text an Arduino senden
-            sendTextToOtherDevice(text)
+
+            //Message aus text an Arduino senden
+            bluetoothService?.write(text +"/n");
 
             //scrolls recyclerView to the bottom
             chatBox.smoothScrollToPosition(messageList.size);
