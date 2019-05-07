@@ -1,17 +1,17 @@
 package com.mosy.morsemessenger
 
+import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.IBinder
 import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.View
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -20,33 +20,88 @@ import java.io.UnsupportedEncodingException
 class MainActivity : AppCompatActivity() {
 
     private lateinit var devicesAdapter: DevicesAdapter
-    private var bluetoothService: BluetoothService? = null
     private lateinit var devicesList : ArrayList<BluetoothDevice>
     private lateinit var btSwitch: Switch;
+    private var myService: BluetoothConnectionService? = null
+    private var bluetoothService: BluetoothService? = null
+    private var isBound = false
 
+
+    /*private val myConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName,
+                                        service: IBinder
+        ) {
+            val binder = service as BluetoothConnectionService.MyLocalBinder
+            myService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            isBound = false
+        }
+    }
+    */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        /*if(!isServiceRunning(BluetoothConnectionService::class.java)){
+            startService(intent)
+        }
+        bindService(intent, myConnection, Context.BIND_AUTO_CREATE)
+        */
         devicesRV.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         devicesList = ArrayList()
         devicesAdapter = DevicesAdapter(devicesList, {device : BluetoothDevice -> onDeviceClicked(device)})
         devicesRV.adapter = devicesAdapter
+        bluetoothService = BluetoothService(handler, 42)
+        if(!isServiceRunning(BluetoothConnectionService::class.java)){
+            startService(Intent(applicationContext, BluetoothConnectionService::class.java))
+            bindService(Intent(applicationContext, BluetoothConnectionService::class.java), myConnection, Context.BIND_AUTO_CREATE)
 
+        }
         implementSwitchOnClickListener()
         initializeBluetoothService()
     }
-
-    fun initializeBluetoothService(){
-        val handler = object: Handler() {
-            override fun handleMessage(msg: Message) {
-                when(msg.what){
-                    MESSAGE_READ -> messageRead(msg)
-                    MESSAGE_CONNECTION -> messageConnection(msg)
-                }
+    val handler = object: Handler() {
+        override fun handleMessage(msg: Message) {
+            when(msg.what){
+                MESSAGE_READ -> messageRead(msg)
+                MESSAGE_CONNECTION -> messageConnection(msg)
             }
         }
-        bluetoothService = BluetoothService(handler)
+    }
+    //TODO: Kommentar. was macht das?
+    fun messageRead(msg: Message){
+        try {
+            //textViewMessage.text = msg.obj as String
+        } catch (e: UnsupportedEncodingException) {
+            e.printStackTrace()
+        }
+    }
+
+    //TODO: Kommentar. was macht das?
+    fun messageConnection(msg: Message){
+        if (msg.arg1 == 1) {
+            Toast.makeText(applicationContext, "Verbindung aufgebaut: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            Toast.makeText(applicationContext, "Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show()
+        }
+    }
+    fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        // Loop through the running services
+        for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                // If the service is running then return true
+                return true
+            }
+        }
+        return false
+    }
+    fun initializeBluetoothService(){
+
 
         //Check if Bluetooth is already enabled on device.
         if (bluetoothService?.enabled == true) {
@@ -126,24 +181,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //TODO: Kommentar. was macht das?
-    fun messageRead(msg: Message){
-        try {
-            //textViewMessage.text = msg.obj as String
-        } catch (e: UnsupportedEncodingException) {
-            e.printStackTrace()
-        }
-    }
-
-    //TODO: Kommentar. was macht das?
-    fun messageConnection(msg: Message){
-        if (msg.arg1 == 1) {
-            Toast.makeText(applicationContext, "Verbindung aufbauen: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
-        }
-        else {
-            Toast.makeText(applicationContext, "Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show()
-        }
-    }
 
     //Click-Listener for Device in Devices-RecyclerView. To create connection with Bluetooth-Device.
     private fun onDeviceClicked (device : BluetoothDevice) {
@@ -158,8 +195,26 @@ class MainActivity : AppCompatActivity() {
         //Can only open new Activity, when nameET is filled and bluetooth-device is connected
         if (!nameET.text.isBlank() && bluetoothService?.enabled!! /*TODO: && Verbindung zu Gerät ist hergestellt)*/) {
             val intent = Intent(this, ChatActivity::class.java)
+
+            myService?.setBt(bluetoothService)
+            Log.d("TEST", bluetoothService?.getId() + " UFF")
+            unbindService(myConnection)
             startActivity(intent)
         }
         else Toast.makeText(applicationContext, "Name und/oder Geräteverbindung fehlt", Toast.LENGTH_SHORT).show()
+    }
+
+    private val myConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName,
+                                        service: IBinder
+        ) {
+            val binder = service as BluetoothConnectionService.MyLocalBinder
+            myService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            isBound = false
+        }
     }
 }

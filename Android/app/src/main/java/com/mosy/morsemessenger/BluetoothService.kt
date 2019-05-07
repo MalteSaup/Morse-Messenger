@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -18,11 +19,22 @@ const val MESSAGE_READ: Int = 0
 const val MESSAGE_CONNECTION: Int = 1
 const val MESSAGE_STATUS: Int = 2
 
-class BluetoothService (private val handler: Handler) {
+class BluetoothService (private val handler: Handler, id: Int) {
     // https://stackoverflow.com/questions/18657427/ioexception-read-failed-socket-might-closed-bluetooth-on-android-4-3
     // Hint: If you are connecting to a Bluetooth serial board then try using the
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB.
     // However if you are connecting to an Android peer then please generate your own unique UUID.
+    private var id: Int = 999
+
+    init{
+        this.id = id
+    }
+    fun setId(id: Int){
+        this.id = id
+    }
+    fun getId(): String {
+        return ("h$id")
+    }
     val MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
 
