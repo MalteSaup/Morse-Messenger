@@ -198,7 +198,6 @@ class MainActivity : AppCompatActivity() {
 
             myService?.setBt(bluetoothService)
             Log.d("TEST", bluetoothService?.getId() + " UFF")
-            unbindService(myConnection)
             startActivity(intent)
         }
         else Toast.makeText(applicationContext, "Name und/oder Geräteverbindung fehlt", Toast.LENGTH_SHORT).show()
@@ -218,3 +217,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+/* TODO:
+- App zurück zu Startbildschirm, wenn Verbindung abreißt
+- Startbildschirm: Möglichkeit, Verbindung zu trennen (z.B. wenn man sich falsch verbunden hat)
+- Nachricht von Arduino annehmen und in Chatfenster anzeigen können
+- Nachrichten in Datenbank speichern?
+- Kommentare am Code
+- Text im EditText-Feld weiß
+- Name aus EditText mit Intent.putExtra an zweite Activity übergeben. Namen an Arduino übertragen.
+App nimmt Namen-String an und setzt diesen oben in den Balken ein (statt MorseMessenger).
+- Bluetooth-Icon für Geräte malen. Unterscheidung zwischen Handy, TV etc möglich?
+ */
