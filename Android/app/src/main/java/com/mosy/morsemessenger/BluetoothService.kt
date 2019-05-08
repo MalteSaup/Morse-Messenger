@@ -51,6 +51,16 @@ class BluetoothService (private val handler: Handler, id: Int) {
         if (device != null) {
             val connectThread = ConnectThread(device)
             connectThread.start()
+            //TODO: icon in Recylerview auf ic_bluetooth_connected_24dp setzen
+        }
+    }
+
+    fun disconnect(macAddress: String) {
+        val device = bluetoothAdapter?.getRemoteDevice(macAddress)
+        if (device != null) {
+            val connectThread = ConnectThread(device)
+            connectThread.cancel()
+            //TODO: icon in Recylerview auf ic_bluetooth_24dp setzen
         }
     }
 
@@ -59,16 +69,15 @@ class BluetoothService (private val handler: Handler, id: Int) {
     }
 
     private inner class ConnectThread(val device: BluetoothDevice) : Thread() {
+        var socket: BluetoothSocket? = null
+
         override fun run(){
             var fail = false
-
-            var socket: BluetoothSocket? = null
 
             try {
                 socket = device.createRfcommSocketToServiceRecord(MY_UUID)
             } catch (e: IOException) {
                 fail = true
-
                 //Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_SHORT).show()
             }
 
@@ -84,13 +93,22 @@ class BluetoothService (private val handler: Handler, id: Int) {
                     //insert code to deal with this
                     // Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_SHORT).show()
                 }
-
             }
 
             if (fail == false) {
-                if (socket != null) connectedThread = ConnectedThread(socket)
+                if (socket != null) connectedThread = ConnectedThread(socket!!)
                 connectedThread?.start()
                 handler.obtainMessage(MESSAGE_CONNECTION, 1, -1, device.name).sendToTarget()
+            }
+
+        }
+
+        fun cancel() {
+            try {
+                Log.d(TAG, "cancel: Closing Client Socket.")
+                socket!!.close()
+            } catch (e: IOException) {
+                Log.e(TAG, "cancel of socket in ConnectThread failed. " + e.message)
             }
 
         }
@@ -119,9 +137,7 @@ class BluetoothService (private val handler: Handler, id: Int) {
                 stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
                 if (stringBuilder.endsWith("\r\n")){
                     // Send the obtained bytes to the UI activity.
-                    val readMsg = handler.obtainMessage(
-                        MESSAGE_READ, numBytes, -1,
-                        stringBuilder.toString())
+                    val readMsg = handler.obtainMessage(MESSAGE_READ, numBytes, -1, stringBuilder.toString())
                     readMsg.sendToTarget()
                     stringBuilder.clear()
                 }

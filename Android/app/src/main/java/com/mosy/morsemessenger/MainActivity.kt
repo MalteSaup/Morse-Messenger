@@ -26,42 +26,24 @@ class MainActivity : AppCompatActivity() {
     private var bluetoothService: BluetoothService? = null
     private var isBound = false
 
-
-    /*private val myConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName,
-                                        service: IBinder
-        ) {
-            val binder = service as BluetoothConnectionService.MyLocalBinder
-            myService = binder.getService()
-            isBound = true
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            isBound = false
-        }
-    }
-    */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        /*if(!isServiceRunning(BluetoothConnectionService::class.java)){
-            startService(intent)
-        }
-        bindService(intent, myConnection, Context.BIND_AUTO_CREATE)
-        */
+
         devicesRV.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         devicesList = ArrayList()
         devicesAdapter = DevicesAdapter(devicesList, {device : BluetoothDevice -> onDeviceClicked(device)})
         devicesRV.adapter = devicesAdapter
+
         bluetoothService = BluetoothService(handler, 42)
         if(!isServiceRunning(BluetoothConnectionService::class.java)){
             startService(Intent(applicationContext, BluetoothConnectionService::class.java))
             bindService(Intent(applicationContext, BluetoothConnectionService::class.java), myConnection, Context.BIND_AUTO_CREATE)
-
         }
         implementSwitchOnClickListener()
         initializeBluetoothService()
     }
+
     val handler = object: Handler() {
         override fun handleMessage(msg: Message) {
             when(msg.what){
@@ -70,7 +52,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    //TODO: Kommentar. was macht das?
+
+    //Read message from other device
     fun messageRead(msg: Message){
         try {
             //textViewMessage.text = msg.obj as String
@@ -100,8 +83,8 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
-    fun initializeBluetoothService(){
 
+    fun initializeBluetoothService(){
 
         //Check if Bluetooth is already enabled on device.
         if (bluetoothService?.enabled == true) {
@@ -181,6 +164,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //Click-Listener for disconnecting all Devices //TODO: Code hübsch: Nicht alle Devices müssen getrennt werden, sondern nur das eine verbundene
+    fun disconnectDevice (view: View) {
+        for ( device in devicesList) {
+            val macAddress = device.address
+            bluetoothService?.disconnect(macAddress)
+            Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     //Click-Listener for Device in Devices-RecyclerView. To create connection with Bluetooth-Device.
     private fun onDeviceClicked (device : BluetoothDevice) {
@@ -192,12 +183,13 @@ class MainActivity : AppCompatActivity() {
 
     //Click-Listener for toChat-Button. Starts the ChatActivity.
     fun implementChatBtnClickListener(view: View) {
+        //TODO: Bugfix: App stürzt momentan ab, wenn man Name eingegeben hat, keine Verbindung steht und der toChat-Button gedrückt wird
         //Can only open new Activity, when nameET is filled and bluetooth-device is connected
         if (!nameET.text.isBlank() && bluetoothService?.enabled!! /*TODO: && Verbindung zu Gerät ist hergestellt)*/) {
             val intent = Intent(this, ChatActivity::class.java)
-
             myService?.setBt(bluetoothService)
             Log.d("TEST", bluetoothService?.getId() + " UFF")
+            intent.putExtra("username", nameET.text)
             startActivity(intent)
         }
         else Toast.makeText(applicationContext, "Name und/oder Geräteverbindung fehlt", Toast.LENGTH_SHORT).show()
@@ -220,12 +212,7 @@ class MainActivity : AppCompatActivity() {
 
 /* TODO:
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
-- Startbildschirm: Möglichkeit, Verbindung zu trennen (z.B. wenn man sich falsch verbunden hat)
-- Nachricht von Arduino annehmen und in Chatfenster anzeigen können
 - Nachrichten in Datenbank speichern?
-- Kommentare am Code
-- Text im EditText-Feld weiß
-- Name aus EditText mit Intent.putExtra an zweite Activity übergeben. Namen an Arduino übertragen.
-App nimmt Namen-String an und setzt diesen oben in den Balken ein (statt MorseMessenger).
-- Bluetooth-Icon für Geräte malen. Unterscheidung zwischen Handy, TV etc möglich?
+- Kommentare am Code !!!!!!!!!!!!!!!!!!
+App nimmt Namen-String an und setzt diesen oben in den Balken ein (statt MorseMessenger). Problem: App wird dann automatisch umbenannt. Lösung: Name unter den Balken in neuem extra Balken anzeigen
  */

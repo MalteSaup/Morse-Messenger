@@ -7,12 +7,14 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_chat.*
+import java.io.UnsupportedEncodingException
 
 class ChatActivity : AppCompatActivity() {
 
@@ -57,15 +59,36 @@ class ChatActivity : AppCompatActivity() {
     fun setBtService(bt: BluetoothService?) {
         bluetoothService = bt
     }
+
+    //Read message from other device
+    //TODO: handler aus MainActivity nutzen und messageRead ausführen
+    fun messageRead(msg: android.os.Message){
+        try {
+            receiveTextFromOtherDevice(msg.obj as String) //msg.obj ist der mit String Builder erstellte String aus BluetoothService InputStream
+        } catch (e: UnsupportedEncodingException) {
+            e.printStackTrace()
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
         bindService(Intent(applicationContext, BluetoothConnectionService::class.java), myConnection, Context.BIND_AUTO_CREATE)
-        chatBox.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false) as RecyclerView.LayoutManager?
+
+        chatBox.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
+
+        //set MessageAdapter
         messageList = ArrayList()
         messageAdapter = MessageAdapter(messageList)
         chatBox.adapter = messageAdapter
 
+        //get Username from Intent
+        val intent: Intent = getIntent()
+        val username: String = intent.getStringExtra("username")
+
+        //Send Username to other device
+        bluetoothService?.write(username +"/n");
 
         //stopService(Intent(applicationContext, BluetoothConnectionService::class.java))
 
@@ -75,7 +98,6 @@ class ChatActivity : AppCompatActivity() {
             Log.d("TEST", this.bluetoothService?.getId() + " UFF12")
             if(isBound) Log.d("TEST", "TRUE BOUND")
             else Log.d("TEST", "FALSE BOUND")
-            //TODO: String aus Bluetooth-Übertragung bekommen und in message umwandeln mit id 1
             //own id: 0, id of other chat-member: 1
             var message: Message = Message(0, text)
             //var message2: Message = Message(1, bluetoothService?.getId() as String)
@@ -88,30 +110,25 @@ class ChatActivity : AppCompatActivity() {
 
             //Update RecyclerView
             messageList.add(message)
-            //messageList.add(message2)
-            messageAdapter?.notifyItemInserted(messageList.size - 1)
+            messageAdapter.notifyItemInserted(messageList.size - 1)
 
             //delete text in textInput
             textInput.setText("")
-
         }
+    }
 
-        //TODO: ViewModel und App-interne Datenbank erstellen. Dort Chatverläufe speichern anhand von MAC-Adresse und Message.
-
+    fun receiveUsernameFromOtherDevice(text: String) {
+        //TODO: get first message of other device (which is the username) and display it in app header
+        var usernameMessage: Message = Message(1, text)
+        var username = usernameMessage.text
     }
 
 
-    fun sendTextToOtherDevice(text: String) {
-        //stackoverflow.com/questions/5030150/passing-a-bluetooth-connection-to-a-new-activity
-        // stackoverflow.com/questions/22573301/how-to-pass-a-handler-from-activity-to-service
-        //stackoverflow.com/questions/17568470/holding-android-bluetooth-connection-through-multiple-activities
-        //stackoverflow.com/questions/40308008/pass-the-bluetooth-connection-between-activities-in-android-studio
-        //github.com/socketio/socket.io-client-java/issues/219
+    fun receiveTextFromOtherDevice(text: String) {
+        var message: Message = Message(1, text)
+        messageList.add(message)
+        messageAdapter.notifyItemInserted(messageList.size - 1)
 
-
-        //github.com/sunsided/android-bluetoothspp/blob/master/src/de/widemeadows/android/bluetoothspptest/BluetoothService.java
-        // developer.android.com/guide/topics/connectivity/bluetooth
-        //de.wikibooks.org/wiki/Googles_Android/_Bluetooth
     }
 
 }

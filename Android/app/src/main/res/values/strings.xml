@@ -9,6 +9,7 @@
     <string name="switchStatusOff">off</string>
     <string name="switchStatusOn">on</string>
     <string name="discoverDevices">Suche Geräte</string>
+    <string name="disconnect">Trennen</string>
     <string name="to_chat">Zum Chat</string>
 
     <!--Chat Activity-->
