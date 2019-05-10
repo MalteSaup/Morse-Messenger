@@ -164,9 +164,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //Click-Listener for disconnecting all Devices //TODO: Code hübsch: Nicht alle Devices müssen getrennt werden, sondern nur das eine verbundene
+    //Click-Listener for disconnecting all connected Devices
     fun disconnectDevice (view: View) {
-        for ( device in devicesList) {
+        var pairedDevices: Set<BluetoothDevice> = BluetoothAdapter.getDefaultAdapter().bondedDevices
+
+        for (device in pairedDevices) {
             val macAddress = device.address
             bluetoothService?.disconnect(macAddress)
             Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
