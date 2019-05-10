@@ -3,6 +3,7 @@ package com.mosy.morsemessenger
 import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothDevice.BOND_BONDED
 import android.content.*
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.bluetooth_list_item.*
 import java.io.UnsupportedEncodingException
 
 class MainActivity : AppCompatActivity() {
@@ -85,7 +87,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun initializeBluetoothService(){
-
         //Check if Bluetooth is already enabled on device.
         if (bluetoothService?.enabled == true) {
             onOffTV.text = getString(R.string.switchStatusOn)
@@ -114,6 +115,7 @@ class MainActivity : AppCompatActivity() {
 
             /*Wenn man den Switch auf an stellt, wird ein Dialog gezeigt (Zulassen/Ablehnen)
             * TODO: Wenn man auf Ablehnen klickt, muss der Switch wieder auf off gestellt werden */
+
         }
         onOffTV.text = getString(R.string.switchStatusOn)
     }
@@ -166,12 +168,16 @@ class MainActivity : AppCompatActivity() {
 
     //Click-Listener for disconnecting all connected Devices
     fun disconnectDevice (view: View) {
-        var pairedDevices: Set<BluetoothDevice> = BluetoothAdapter.getDefaultAdapter().bondedDevices
+        val pairedDevices: Set<BluetoothDevice> = BluetoothAdapter.getDefaultAdapter().bondedDevices
 
-        for (device in pairedDevices) {
-            val macAddress = device.address
-            bluetoothService?.disconnect(macAddress)
-            Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
+        if (pairedDevices.isNotEmpty()) {
+            for (device in pairedDevices) {
+                val macAddress = device.address
+                bluetoothService?.disconnect(macAddress)
+                Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
+                //Change Icon in RecyclerView-Element
+                //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp) //TODO: Testen, ob funktioniert. Wenn nicht: Bugfix
+            }
         }
     }
 
@@ -181,17 +187,23 @@ class MainActivity : AppCompatActivity() {
         val macAddress = device.address
         Toast.makeText(applicationContext, "Connecting: ${device.name}", Toast.LENGTH_SHORT).show()
         bluetoothService?.connect(macAddress)
+        //Change Icon in RecyclerView-Element
+        if(device.bondState == BOND_BONDED ) {
+            //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp) //TODO: Testen, ob funktioniert. Wenn nicht: Bugfix
+        }
     }
 
     //Click-Listener for toChat-Button. Starts the ChatActivity.
     fun implementChatBtnClickListener(view: View) {
-        //TODO: Bugfix: App stürzt momentan ab, wenn man Name eingegeben hat, keine Verbindung steht und der toChat-Button gedrückt wird
+        //TODO: Bugfix: App stürzt momentan ab, wenn man Name eingegeben hat, keine Verbindung steht und der toChat-Button gedrückt wird !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //TODO: Bugfix man kommt zur Chat-Activity obwohl kein Gerät verbunden ist --> bluetoothService?.pairedDevices ist nicht leer, obwohl kein Gerät verbunden ist !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //Can only open new Activity, when nameET is filled and bluetooth-device is connected
-        if (!nameET.text.isBlank() && bluetoothService?.enabled!! /*TODO: && Verbindung zu Gerät ist hergestellt)*/) {
+        if (!nameET.text.isBlank() && bluetoothService?.enabled!! && bluetoothService?.pairedDevices!=null && bluetoothService?.pairedDevices!!.isNotEmpty()) {
+            Log.i("TEST pairedDevices", bluetoothService?.pairedDevices.toString())
             val intent = Intent(this, ChatActivity::class.java)
             myService?.setBt(bluetoothService)
             Log.d("TEST", bluetoothService?.getId() + " UFF")
-            intent.putExtra("username", nameET.text)
+            intent.putExtra("username", nameET.text.toString())
             startActivity(intent)
         }
         else Toast.makeText(applicationContext, "Name und/oder Geräteverbindung fehlt", Toast.LENGTH_SHORT).show()

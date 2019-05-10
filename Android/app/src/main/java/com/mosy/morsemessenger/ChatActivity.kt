@@ -61,7 +61,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     //Read message from other device
-    //TODO: handler aus MainActivity nutzen und messageRead ausführen
+    //TODO: handler aus MainActivity nutzen und messageRead ausführen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     fun messageRead(msg: android.os.Message){
         try {
             receiveTextFromOtherDevice(msg.obj as String) //msg.obj ist der mit String Builder erstellte String aus BluetoothService InputStream

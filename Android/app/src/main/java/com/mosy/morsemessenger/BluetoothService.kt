@@ -51,7 +51,6 @@ class BluetoothService (private val handler: Handler, id: Int) {
         if (device != null) {
             val connectThread = ConnectThread(device)
             connectThread.start()
-            //TODO: icon in Recylerview auf ic_bluetooth_connected_24dp setzen
         }
     }
 
@@ -60,7 +59,6 @@ class BluetoothService (private val handler: Handler, id: Int) {
         if (device != null) {
             val connectThread = ConnectThread(device)
             connectThread.cancel()
-            //TODO: icon in Recylerview auf ic_bluetooth_24dp setzen
         }
     }
 
