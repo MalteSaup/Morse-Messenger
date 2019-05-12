@@ -10,4 +10,5 @@ class Message(id: Number, text: String) {
         this.text = text
     }
 
+
 }

@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     private var myService: BluetoothConnectionService? = null
     private var bluetoothService: BluetoothService? = null
     private var isBound = false
+    private var isConnected = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         }
         implementSwitchOnClickListener()
         initializeBluetoothService()
+        disconnectBtn.isClickable = false
     }
 
     val handler = object: Handler() {
@@ -64,15 +66,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //TODO: Kommentar. was macht das?
+    //Toast ob Bluetoothverbindung aufgebaut wurde
     fun messageConnection(msg: Message){
         if (msg.arg1 == 1) {
             Toast.makeText(applicationContext, "Verbindung aufgebaut: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
+            disconnectBtn.isClickable = true
+            isConnected = true
         }
         else {
             Toast.makeText(applicationContext, "Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show()
         }
     }
+    //Checkt ob Hintergrund Service läuft
     fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
@@ -112,6 +117,8 @@ class MainActivity : AppCompatActivity() {
         if (bluetoothService?.enabled == false) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+
+
 
             /*Wenn man den Switch auf an stellt, wird ein Dialog gezeigt (Zulassen/Ablehnen)
             * TODO: Wenn man auf Ablehnen klickt, muss der Switch wieder auf off gestellt werden */
@@ -153,7 +160,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(applicationContext, "Bluetooth ist aus", Toast.LENGTH_SHORT).show()
     }
 
-    //TODO: Kommentar. was macht das?
+    //Fügt vorhandene Bluetooth Geräte in der Umgebung dem Recycler View hinzu
     private val blReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
@@ -179,6 +186,7 @@ class MainActivity : AppCompatActivity() {
                 //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp) //TODO: Testen, ob funktioniert. Wenn nicht: Bugfix
             }
         }
+        disconnectBtn.isClickable = false
     }
 
     //Click-Listener for Device in Devices-RecyclerView. To create connection with Bluetooth-Device.
@@ -195,10 +203,9 @@ class MainActivity : AppCompatActivity() {
 
     //Click-Listener for toChat-Button. Starts the ChatActivity.
     fun implementChatBtnClickListener(view: View) {
-        //TODO: Bugfix: App stürzt momentan ab, wenn man Name eingegeben hat, keine Verbindung steht und der toChat-Button gedrückt wird !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //TODO: Bugfix man kommt zur Chat-Activity obwohl kein Gerät verbunden ist --> bluetoothService?.pairedDevices ist nicht leer, obwohl kein Gerät verbunden ist !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         //Can only open new Activity, when nameET is filled and bluetooth-device is connected
-        if (!nameET.text.isBlank() && bluetoothService?.enabled!! && bluetoothService?.pairedDevices!=null && bluetoothService?.pairedDevices!!.isNotEmpty()) {
+        if (!nameET.text.isBlank() && bluetoothService?.enabled!! && bluetoothService?.pairedDevices!=null && bluetoothService?.pairedDevices!!.isNotEmpty() && isConnected) {
             Log.i("TEST pairedDevices", bluetoothService?.pairedDevices.toString())
             val intent = Intent(this, ChatActivity::class.java)
             myService?.setBt(bluetoothService)

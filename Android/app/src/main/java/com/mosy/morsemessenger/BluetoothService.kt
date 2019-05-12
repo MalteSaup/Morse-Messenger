@@ -24,8 +24,11 @@ class BluetoothService (private val handler: Handler, id: Int) {
     // Hint: If you are connecting to a Bluetooth serial board then try using the
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB.
     // However if you are connecting to an Android peer then please generate your own unique UUID.
-    private var id: Int = 999
-
+    private var id: Int = 99
+    private var count = 0
+    var textArray: ArrayList<String> = ArrayList()
+    var inChat = false
+    var message = Message(1,"")
     init{
         this.id = id
     }
@@ -46,12 +49,14 @@ class BluetoothService (private val handler: Handler, id: Int) {
     }
 
     val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
+
     fun connect(macAddress: String) {
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
         if (device != null) {
             val connectThread = ConnectThread(device)
             connectThread.start()
         }
+
     }
 
     fun disconnect(macAddress: String) {
@@ -104,7 +109,7 @@ class BluetoothService (private val handler: Handler, id: Int) {
         fun cancel() {
             try {
                 Log.d(TAG, "cancel: Closing Client Socket.")
-                socket!!.close()
+                if (socket != null) socket!!.close()
             } catch (e: IOException) {
                 Log.e(TAG, "cancel of socket in ConnectThread failed. " + e.message)
             }
@@ -115,7 +120,7 @@ class BluetoothService (private val handler: Handler, id: Int) {
     private var connectedThread: ConnectedThread? = null
 
     private inner class ConnectedThread(private val mmSocket: BluetoothSocket) : Thread() {
-        private val mmInStream: InputStream = mmSocket.inputStream
+        val mmInStream: InputStream = mmSocket.inputStream
         val mmOutStream: OutputStream = mmSocket.outputStream
         private val mmBuffer: ByteArray = ByteArray(1024) // mmBuffer store for the stream
 
@@ -133,12 +138,15 @@ class BluetoothService (private val handler: Handler, id: Int) {
                     break
                 }
                 stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
-                if (stringBuilder.endsWith("\r\n")){
-                    // Send the obtained bytes to the UI activity.
-                    val readMsg = handler.obtainMessage(MESSAGE_READ, numBytes, -1, stringBuilder.toString())
-                    readMsg.sendToTarget()
-                    stringBuilder.clear()
+                if(inChat){
+                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1){
+                       textArray.add(stringBuilder.toString())
+                       stringBuilder.clear()
+
+                   }
+                   else Log.d("BTSTRING", "STRINGBUILDER")
                 }
+
             }
         }
 
@@ -167,6 +175,5 @@ class BluetoothService (private val handler: Handler, id: Int) {
         } catch (e: IOException) {
         }
     }
-
 }
 
