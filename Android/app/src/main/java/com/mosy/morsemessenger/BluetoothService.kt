@@ -129,8 +129,9 @@ class BluetoothService (private val handler: Handler) {
                 }
                 stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
                 if(inChat){
-                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1){
+                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1  && stringBuilder.endsWith("\r")){
                        textArray.add(stringBuilder.toString())
+                       textArray[textArray.size-1].replace("\n", "")
                        stringBuilder.clear()
 
                    }
