@@ -32,13 +32,8 @@ class BluetoothConnectionService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    fun getId() : String? {
-        return bluetoothService?.getId()
-    }
-
     fun setBt(bluetoothService: BluetoothService?){
         this.bluetoothService = bluetoothService
-        Log.d("TEST", """${this.bluetoothService?.getId() as String}OFF""")
     }
 
     fun getBt(): BluetoothService? {

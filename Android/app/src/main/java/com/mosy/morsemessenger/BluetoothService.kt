@@ -19,28 +19,18 @@ const val MESSAGE_READ: Int = 0
 const val MESSAGE_CONNECTION: Int = 1
 const val MESSAGE_STATUS: Int = 2
 
-class BluetoothService (private val handler: Handler, id: Int) {
+class BluetoothService (private val handler: Handler) {
     // https://stackoverflow.com/questions/18657427/ioexception-read-failed-socket-might-closed-bluetooth-on-android-4-3
     // Hint: If you are connecting to a Bluetooth serial board then try using the
     // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB.
     // However if you are connecting to an Android peer then please generate your own unique UUID.
-    private var id: Int = 99
-    private var count = 0
     var textArray: ArrayList<String> = ArrayList()
     var inChat = false
     var message = Message(1,"")
-    init{
-        this.id = id
-    }
-    fun setId(id: Int){
-        this.id = id
-    }
-    fun getId(): String {
-        return ("h$id")
-    }
     val MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
 
+    init{}
     val enabled: Boolean?
         get() = bluetoothAdapter?.isEnabled
 

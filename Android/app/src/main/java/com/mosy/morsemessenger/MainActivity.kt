@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         devicesAdapter = DevicesAdapter(devicesList, {device : BluetoothDevice -> onDeviceClicked(device)})
         devicesRV.adapter = devicesAdapter
 
-        bluetoothService = BluetoothService(handler, 42)
+        bluetoothService = BluetoothService(handler)
         if(!isServiceRunning(BluetoothConnectionService::class.java)){
             startService(Intent(applicationContext, BluetoothConnectionService::class.java))
             bindService(Intent(applicationContext, BluetoothConnectionService::class.java), myConnection, Context.BIND_AUTO_CREATE)
@@ -209,7 +209,6 @@ class MainActivity : AppCompatActivity() {
             Log.i("TEST pairedDevices", bluetoothService?.pairedDevices.toString())
             val intent = Intent(this, ChatActivity::class.java)
             myService?.setBt(bluetoothService)
-            Log.d("TEST", bluetoothService?.getId() + " UFF")
             intent.putExtra("username", nameET.text.toString())
             startActivity(intent)
         }

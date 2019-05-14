@@ -64,23 +64,6 @@ class ChatActivity : AppCompatActivity() {
         bluetoothService?.inChat = true
 
     }
-    //Read message from other device
-    //TODO: handler aus MainActivity nutzen und messageRead ausführen !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    /*val handler = object: Handler() {
-        override fun handleMessage(msg: android.os.Message) {
-            when(msg.what){
-                MESSAGE_READ -> messageRead(msg)
-            }
-        }
-    }
-
-    fun messageRead(msg: android.os.Message) {
-        try {
-           Log.d("BTSTRING", "MSG")//msg.obj ist der mit String Builder erstellte String aus BluetoothService InputStream
-        } catch (e: UnsupportedEncodingException) {
-            e.printStackTrace()
-        }
-    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,23 +76,15 @@ class ChatActivity : AppCompatActivity() {
 
         chatBox.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
 
-        //set MessageAdapter
         chatBox.adapter = messageAdapter
-        //get Username from Intent
         val intent: Intent = getIntent()
         username = intent.getStringExtra("username")
         d("TEST", username)
-        //Send Username to other device
-        //stopService(Intent(applicationContext, BluetoothConnectionService::class.java))
-        //Click-Listener for send-Button
         sendButton.setOnClickListener {
             var text: String = textInput.text.toString()
-            d("TEST", this.bluetoothService?.getId() + " UFF12")
             if (isBound) d("TEST", "TRUE BOUND")
             else d("TEST", "FALSE BOUND")
-            //own id: 0, id of other chat-member: 1
             var message: Message = Message(1, text)
-            //var message2: Message = Message(1, bluetoothService?.getId() as String)
 
             //Message aus text an Arduino senden
             bluetoothService?.write(text + "/n");
