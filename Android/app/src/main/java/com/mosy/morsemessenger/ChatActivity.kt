@@ -16,6 +16,9 @@ import android.util.Log.d
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_chat.*
 import java.io.UnsupportedEncodingException
+import android.app.Activity
+import android.view.inputmethod.InputMethodManager
+
 
 class ChatActivity : AppCompatActivity() {
     var messageList: ArrayList<Message> = ArrayList()
@@ -68,6 +71,7 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
         bindService(
             Intent(applicationContext, BluetoothConnectionService::class.java),
             myConnection,
@@ -79,7 +83,8 @@ class ChatActivity : AppCompatActivity() {
         chatBox.adapter = messageAdapter
         val intent: Intent = getIntent()
         username = intent.getStringExtra("username")
-        d("TEST", username)
+        Log.i("TEST", username)
+
         sendButton.setOnClickListener {
             var text: String = textInput.text.toString()
             if (isBound) d("TEST", "TRUE BOUND")
@@ -98,7 +103,9 @@ class ChatActivity : AppCompatActivity() {
 
             //delete text in textInput
             textInput.setText("")
+            closeKeyboard()
         }
+
         //Check ob Nachrichten da sind und in Messenger packen
         mHandler = Handler()
         mRunnable = Runnable{
@@ -121,6 +128,7 @@ class ChatActivity : AppCompatActivity() {
         var usernameMessage: Message = Message(1, text)
         var username = usernameMessage.text
     }
+
     fun receiveTextFromOtherDevice(msg : String) {
         if(!msg.isBlank()){
             d("BTSTRING", msg)
@@ -129,9 +137,6 @@ class ChatActivity : AppCompatActivity() {
                 messageAdapter.notifyItemInserted(messageList.size - 1)
             }
         }
-
-
-
     }
 
     fun checkForNewMessage(): Boolean{
@@ -141,6 +146,16 @@ class ChatActivity : AppCompatActivity() {
             }
         }
         return false
+    }
+
+    fun closeKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view
+        val view = currentFocus
+        if (view != null) {
+            //Grab the correct window token from view.
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 
 
