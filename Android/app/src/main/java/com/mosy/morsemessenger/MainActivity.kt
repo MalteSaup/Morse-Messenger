@@ -232,7 +232,6 @@ class MainActivity : AppCompatActivity() {
 
 /* TODO:
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
-- Bildschirm drehen stoppen
 - Trennen-Button fixen
 - Chat-Button geht nicht immer Bugfix
 - Nachrichten in Datenbank speichern?
