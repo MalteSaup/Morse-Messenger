@@ -35,7 +35,7 @@
             android:id="@+id/textInput"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toStartOf="@+id/sendButton" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="24dp" android:layout_marginBottom="16dp"
+            android:layout_marginStart="24dp" android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:textColor="@color/colorTextW"/>
     <Button
