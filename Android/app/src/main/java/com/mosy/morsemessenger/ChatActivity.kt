@@ -79,11 +79,15 @@ class ChatActivity : AppCompatActivity() {
         )
 
         chatBox.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-
         chatBox.adapter = messageAdapter
+
         val intent: Intent = getIntent()
         username = intent.getStringExtra("username")
         Log.i("TEST", username)
+
+        //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
+        //send username to chat-partner
+        bluetoothService?.write("ThisIsTheName3795568" + username + "/n")
 
         sendButton.setOnClickListener {
             var text: String = textInput.text.toString()
@@ -106,7 +110,7 @@ class ChatActivity : AppCompatActivity() {
             closeKeyboard()
         }
 
-        //Check ob Nachrichten da sind und in Messenger packen
+        //Checks if messages exist and puts them into messenger
         mHandler = Handler()
         mRunnable = Runnable{
             d("BTSTRING", "MSG")
@@ -114,7 +118,6 @@ class ChatActivity : AppCompatActivity() {
                 var removeArray = bluetoothService?.textArray!!
                 for(i in bluetoothService?.textArray!!){
                     receiveTextFromOtherDevice(i)
-
                 }
                 bluetoothService?.textArray = ArrayList()
             }
@@ -123,16 +126,16 @@ class ChatActivity : AppCompatActivity() {
         mRunnable.run()
     }
 
-    fun receiveUsernameFromOtherDevice(text: String) {
-        //TODO: get first message of other device (which is the username) and display it in app header
-        var usernameMessage: Message = Message(1, text)
-        var username = usernameMessage.text
-    }
-
     fun receiveTextFromOtherDevice(msg : String) {
         if(!msg.isBlank()){
             d("BTSTRING", msg)
             if(msg.length > 1){
+                //checks if message is username of chat-partner
+                if (msg.contains("ThisIsTheName3795568", ignoreCase = true)) {
+                    //sets username of chat-partner
+                    val nameString: String = msg.removePrefix("ThisIsTheName3795568")
+                    nameDisplay.text = nameString
+                }
                 messageList.add(Message(-1, msg))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
             }
@@ -148,6 +151,7 @@ class ChatActivity : AppCompatActivity() {
         return false
     }
 
+    //To close keyboard of EditTexts
     fun closeKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         //Find the currently focused view

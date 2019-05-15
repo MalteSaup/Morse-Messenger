@@ -18,7 +18,7 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
         holder.textTV?.setPadding(32,24,32,24)
 
         //change background-image for messages of other chat-member
-        if (message.id == 1) {
+        if (message.id != 1) {
             holder.textTV?.setBackgroundResource( R.drawable.messageleft)
             holder.textTV?.setTextColor(ContextCompat.getColor(holder.textTV.context , R.color.colorTextB))
         }
