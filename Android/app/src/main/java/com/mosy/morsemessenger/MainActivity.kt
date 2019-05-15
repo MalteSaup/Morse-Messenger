@@ -232,6 +232,9 @@ class MainActivity : AppCompatActivity() {
 
 /* TODO:
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
+- Bildschirm drehen stoppen
+- Trennen-Button fixen
+- Chat-Button geht nicht immer Bugfix
 - Nachrichten in Datenbank speichern?
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
 App nimmt Namen-String an und setzt diesen oben in den Balken ein (statt MorseMessenger). Problem: App wird dann automatisch umbenannt. Lösung: Name unter den Balken in neuem extra Balken anzeigen
