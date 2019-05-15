@@ -52,8 +52,8 @@ class BluetoothService (private val handler: Handler) {
     fun disconnect(macAddress: String) {
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
         if (device != null) {
-            val connectThread = ConnectThread(device)
-            connectThread.cancel()
+            Log.i(TAG, device.toString() + " disconnect 1")
+            connectedThread?.cancel()
         }
     }
 
@@ -83,8 +83,6 @@ class BluetoothService (private val handler: Handler) {
                     socket?.close()
                     handler.obtainMessage(MESSAGE_CONNECTION, -1, -1).sendToTarget()
                 } catch (e2: IOException) {
-                    //insert code to deal with this
-                    // Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -159,6 +157,7 @@ class BluetoothService (private val handler: Handler) {
             }
         }
     }
+
     fun write(input: String) {
         val bytes = input.toByteArray()           //converts entered String into bytes
         try {

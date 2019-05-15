@@ -177,11 +177,12 @@ class MainActivity : AppCompatActivity() {
     fun disconnectDevice (view: View) {
         val pairedDevices: Set<BluetoothDevice> = BluetoothAdapter.getDefaultAdapter().bondedDevices
 
-        if (pairedDevices.isNotEmpty()) {
+        if (pairedDevices.isNotEmpty() && isConnected) {
             for (device in pairedDevices) {
                 val macAddress = device.address
                 bluetoothService?.disconnect(macAddress)
                 Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
+                isConnected = false
                 //Change Icon in RecyclerView-Element
                 //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp) //TODO: Testen, ob funktioniert. Wenn nicht: Bugfix
             }
@@ -232,9 +233,7 @@ class MainActivity : AppCompatActivity() {
 
 /* TODO:
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
-- Trennen-Button fixen
 - Chat-Button geht nicht immer Bugfix
-- Nachrichten in Datenbank speichern?
+- Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank löschen
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
-App nimmt Namen-String an und setzt diesen oben in den Balken ein (statt MorseMessenger). Problem: App wird dann automatisch umbenannt. Lösung: Name unter den Balken in neuem extra Balken anzeigen
  */
