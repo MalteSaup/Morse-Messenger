@@ -27,8 +27,9 @@ class ChatActivity : AppCompatActivity() {
     private var myService: BluetoothConnectionService? = null
     private var isBound = false
     private var bluetoothService: BluetoothService? = null
-    lateinit var mRunnable: Runnable;
-    lateinit var mHandler: Handler;
+    lateinit var mRunnable: Runnable
+    lateinit var mHandler: Handler
+
 
     fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager

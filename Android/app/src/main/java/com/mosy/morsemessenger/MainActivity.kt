@@ -1,5 +1,6 @@
 package com.mosy.morsemessenger
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         implementSwitchOnClickListener()
         initializeBluetoothService()
         disconnectBtn.isClickable = false
+
     }
 
     val handler = object: Handler() {
@@ -74,6 +76,7 @@ class MainActivity : AppCompatActivity() {
             isConnected = true
         }
         else {
+            isConnected = false
             Toast.makeText(applicationContext, "Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show()
         }
     }
@@ -117,9 +120,6 @@ class MainActivity : AppCompatActivity() {
         if (bluetoothService?.enabled == false) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-
-
-
             /*Wenn man den Switch auf an stellt, wird ein Dialog gezeigt (Zulassen/Ablehnen)
             * TODO: Wenn man auf Ablehnen klickt, muss der Switch wieder auf off gestellt werden */
 
@@ -133,8 +133,8 @@ class MainActivity : AppCompatActivity() {
         devicesList.clear()
         devicesAdapter.notifyDataSetChanged()
         onOffTV.text = getString(R.string.switchStatusOff)
+        isConnected = false
     }
-
     //Shows Bluetooth-Devices in list, which have already been connected in the past
     fun showPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
@@ -150,6 +150,7 @@ class MainActivity : AppCompatActivity() {
 
     //Find Bluetooth-Devices and show them in List
     fun discoverPairedDevices(view: View){
+
         if (bluetoothService?.enabled!!) {
             bluetoothService?.discover()
             Toast.makeText(baseContext, "Suche Geräte", Toast.LENGTH_SHORT).show()
@@ -176,7 +177,7 @@ class MainActivity : AppCompatActivity() {
     //Click-Listener for disconnecting all connected Devices
     fun disconnectDevice (view: View) {
         val pairedDevices: Set<BluetoothDevice> = BluetoothAdapter.getDefaultAdapter().bondedDevices
-
+        isConnected = false
         if (pairedDevices.isNotEmpty() && isConnected) {
             for (device in pairedDevices) {
                 val macAddress = device.address
@@ -184,7 +185,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
                 isConnected = false
                 //Change Icon in RecyclerView-Element
-                //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp) //TODO: Testen, ob funktioniert. Wenn nicht: Bugfix
+                bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
             }
         }
         disconnectBtn.isClickable = false
@@ -194,11 +195,12 @@ class MainActivity : AppCompatActivity() {
     private fun onDeviceClicked (device : BluetoothDevice) {
         // Get the device MAC address
         val macAddress = device.address
+        isConnected = true
         Toast.makeText(applicationContext, "Connecting: ${device.name}", Toast.LENGTH_SHORT).show()
         bluetoothService?.connect(macAddress)
         //Change Icon in RecyclerView-Element
         if(device.bondState == BOND_BONDED ) {
-            //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp) //TODO: Testen, ob funktioniert. Wenn nicht: Bugfix
+            bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
         }
     }
 
