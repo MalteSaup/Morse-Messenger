@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var devicesAdapter: DevicesAdapter
     private lateinit var devicesList : ArrayList<BluetoothDevice>
-    private lateinit var btSwitch: Switch;
+    private lateinit var btSwitch: Switch
     private var myService: BluetoothConnectionService? = null
     private var bluetoothService: BluetoothService? = null
     private var isBound = false
@@ -177,7 +177,6 @@ class MainActivity : AppCompatActivity() {
     //Click-Listener for disconnecting all connected Devices
     fun disconnectDevice (view: View) {
         val pairedDevices: Set<BluetoothDevice> = BluetoothAdapter.getDefaultAdapter().bondedDevices
-        isConnected = false
         if (pairedDevices.isNotEmpty() && isConnected) {
             for (device in pairedDevices) {
                 val macAddress = device.address
@@ -200,6 +199,14 @@ class MainActivity : AppCompatActivity() {
         bluetoothService?.connect(macAddress)
         //Change Icon in RecyclerView-Element
         if(device.bondState == BOND_BONDED ) {
+            for(i in 0 until devicesList.size){
+                if(devicesList[i] == device){
+                    var k = devicesList[i]
+                    devicesList[i] = devicesList[0]
+                    devicesList[0] = k
+                }
+                devicesAdapter.notifyDataSetChanged()
+            }
             bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
         }
     }
