@@ -14,11 +14,18 @@ import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bluetooth_list_item.*
 import java.io.UnsupportedEncodingException
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.content.Intent
+
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -267,6 +274,11 @@ class MainActivity : AppCompatActivity() {
 - Chat-Button geht nicht immer Bugfix
 - Bugfix: Icon, wenn Verbindung steht --> momentan manchmal da, manchmal nicht
 - Bugfix: Color Switch
+- Ö/Ä/Ü/ß in OE/AE/UE/SS umwandeln
+- nur Großbuchstaben senden
+- CLK:INTEGER , setzt den Clockspeed, also die Geschwindigkeit eines Punktes in Millisekunden. Min:10, max: 2000 (Steuern in der App mit Slider)
+- SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?)
+- ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
 - Info-Icon im Menu, Dialog mit Infos zu verbotenen Buchstaben etc. öffnet sich
 - Nach oben scrollen, wenn Gerät geklickt und an Pos. 1 der Liste verschoben wird
 - Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste
