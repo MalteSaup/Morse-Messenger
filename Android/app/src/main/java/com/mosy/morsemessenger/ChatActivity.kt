@@ -116,7 +116,6 @@ class ChatActivity : AppCompatActivity() {
         mRunnable = Runnable{
             d("BTSTRING", "MSG")
             if(checkForNewMessage()){
-                var removeArray = bluetoothService?.textArray!!
                 for(i in bluetoothService?.textArray!!){
                     receiveTextFromOtherDevice(i)
                 }

@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
     private var bluetoothService: BluetoothService? = null
     private var isBound = false
     private var isConnected = false
+    private lateinit var mRunnable : Runnable
+    private lateinit var mHandler : Handler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +50,22 @@ class MainActivity : AppCompatActivity() {
         initializeBluetoothService()
         disconnectBtn.isClickable = false
 
+        mHandler = Handler()  //Handler der mit dem mRunnable prüft ob Bluetooth an ist und dementsprechend den Switch an oder aus schaltet
+        mRunnable = Runnable{
+            if(checkForBluetooth() && !btSwitch.isChecked){
+                onOffTV.text = getString(R.string.switchStatusOn)
+                btSwitch.isChecked = true
+            }
+            else if(!checkForBluetooth() && btSwitch.isChecked){
+                onOffTV.text = getString(R.string.switchStatusOff)
+                btSwitch.isChecked = false
+
+            }
+            mHandler.postDelayed(this.mRunnable, 500)
+        }
+        mRunnable.run()
+
+
     }
 
     val handler = object: Handler() {
@@ -66,6 +84,11 @@ class MainActivity : AppCompatActivity() {
         } catch (e: UnsupportedEncodingException) {
             e.printStackTrace()
         }
+    }
+
+    fun checkForBluetooth() : Boolean{
+        if(bluetoothService?.enabled!!) return true
+        return false
     }
 
     //Toast ob Bluetoothverbindung aufgebaut wurde
@@ -104,7 +127,7 @@ class MainActivity : AppCompatActivity() {
 
     //Listener for Switch-State-Change. To enable and disable bluetooth on device.
     fun implementSwitchOnClickListener(){
-        btSwitch = findViewById(R.id.bluetoothSwitch);
+        btSwitch = findViewById(R.id.bluetoothSwitch)
         btSwitch.setOnClickListener{
             if(btSwitch.isChecked){
                 bluetoothOn()
