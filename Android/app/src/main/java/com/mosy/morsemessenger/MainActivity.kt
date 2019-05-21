@@ -266,6 +266,7 @@ class MainActivity : AppCompatActivity() {
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
 - Chat-Button geht nicht immer Bugfix
 - Bugfix: Icon, wenn Verbindung steht --> momentan manchmal da, manchmal nicht
+- Bugfix: Color Switch
 - Info-Icon im Menu, Dialog mit Infos zu verbotenen Buchstaben etc. öffnet sich
 - Nach oben scrollen, wenn Gerät geklickt und an Pos. 1 der Liste verschoben wird
 - Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste

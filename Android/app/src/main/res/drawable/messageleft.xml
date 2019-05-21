@@ -6,7 +6,7 @@
             android:bottomRightRadius="15dp"
             android:bottomLeftRadius="15dp">
     </corners>
-    <solid
-            android:color="#AAAAAA">
-    </solid>
+
+    <stroke android:width="6px"
+            android:color="@color/colorAccent"/>
 </shape>
