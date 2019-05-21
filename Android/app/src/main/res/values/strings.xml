@@ -15,4 +15,20 @@
     <!--Chat Activity-->
     <string name="sendMessage">Senden</string>
 
+    <!--Menu-->
+    <string name="rules">Info</string>
+
+    <!--Dialog Rules-->
+    <string name="rulesText">
+        TODO: Erklären, was MorseMessenger macht \n\n
+        Besonderheiten im Vergleich zu einem normalen Chat: \n
+        - Morsealphabet hat nur Kleinbuchstaben \n
+        - Manche Sonderzeichen gibt es nicht. \n
+        - Erlaubte Charaktere: a-z 0-9 . , ? \n
+        - usw.
+    </string>
+    <string name="title_activity_options_menu">OptionsMenuActivity</string>
+    <!--TODO: mit Text füllen + hübsch machen-->
+
+
 </resources>

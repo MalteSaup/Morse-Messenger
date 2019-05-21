@@ -14,24 +14,29 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
+                android:name=".OptionsMenuActivity"
+                android:label="@string/title_activity_options_menu"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
                 android:name=".ChatActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".MainActivity"
-                android:windowSoftInputMode="adjustPan"
-                android:screenOrientation="portrait">
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <service
                 android:name=".BluetoothConnectionService"
                 android:enabled="true"
-                android:exported="true"
-        />
+                android:exported="true"/>
     </application>
 
 </manifest>

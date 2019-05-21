@@ -5,22 +5,18 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.util.Log.d
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_chat.*
-import java.io.UnsupportedEncodingException
-import android.app.Activity
 import android.view.inputmethod.InputMethodManager
 
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : OptionsMenuActivity() {
     var messageList: ArrayList<Message> = ArrayList()
     var messageAdapter: MessageAdapter = MessageAdapter(messageList)
     lateinit var username: String

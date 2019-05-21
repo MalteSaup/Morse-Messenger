@@ -1,33 +1,24 @@
 package com.mosy.morsemessenger
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.BOND_BONDED
 import android.content.*
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.Menu
-import android.view.View
 import android.widget.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bluetooth_list_item.*
 import java.io.UnsupportedEncodingException
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.content.Intent
+import android.view.*
 
-
-
-
-class MainActivity : AppCompatActivity() {
+class MainActivity : OptionsMenuActivity() {
 
     private lateinit var devicesAdapter: DevicesAdapter
     private lateinit var devicesList : ArrayList<BluetoothDevice>
