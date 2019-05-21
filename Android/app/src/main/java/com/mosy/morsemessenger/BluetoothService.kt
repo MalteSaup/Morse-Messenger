@@ -159,7 +159,7 @@ class BluetoothService (private val handler: Handler) {
     }
 
     fun write(input: String) {
-        val bytes = input.toByteArray()           //converts entered String into bytes
+        val bytes = input.toUpperCase().toByteArray()           //converts entered String into bytes
         try {
             connectedThread?.write(bytes)
         } catch (e: IOException) {

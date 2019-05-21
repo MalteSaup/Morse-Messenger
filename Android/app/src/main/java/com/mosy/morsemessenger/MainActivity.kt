@@ -271,7 +271,6 @@ class MainActivity : OptionsMenuActivity() {
 - Bugfix: Icon, wenn Verbindung steht (siehe oben + Devices Adapter
 - Bugfix: Color Switch Farbe
 - Ö/Ä/Ü/ß in OE/AE/UE/SS umwandeln
-- nur Großbuchstaben senden
 - CLK:INTEGER , setzt den Clockspeed, also die Geschwindigkeit eines Punktes in Millisekunden. Min:10, max: 2000 (Steuern in der App mit Slider)
 - SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?)
 - ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
