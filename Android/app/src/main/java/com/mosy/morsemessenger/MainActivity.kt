@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
             startService(Intent(applicationContext, BluetoothConnectionService::class.java))
             bindService(Intent(applicationContext, BluetoothConnectionService::class.java), myConnection, Context.BIND_AUTO_CREATE)
         }
+
         implementSwitchOnClickListener()
         initializeBluetoothService()
         disconnectBtn.isClickable = false
@@ -59,13 +60,10 @@ class MainActivity : AppCompatActivity() {
             else if(!checkForBluetooth() && btSwitch.isChecked){
                 onOffTV.text = getString(R.string.switchStatusOff)
                 btSwitch.isChecked = false
-
             }
             mHandler.postDelayed(this.mRunnable, 500)
         }
         mRunnable.run()
-
-
     }
 
     val handler = object: Handler() {
@@ -94,15 +92,16 @@ class MainActivity : AppCompatActivity() {
     //Toast ob Bluetoothverbindung aufgebaut wurde
     fun messageConnection(msg: Message){
         if (msg.arg1 == 1) {
-            Toast.makeText(applicationContext, "Verbindung aufgebaut: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
             disconnectBtn.isClickable = true
             isConnected = true
+            Toast.makeText(applicationContext, "Verbindung aufgebaut: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
         }
         else {
             isConnected = false
             Toast.makeText(applicationContext, "Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show()
         }
     }
+
     //Checkt ob Hintergrund Service läuft
     fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -217,7 +216,6 @@ class MainActivity : AppCompatActivity() {
     private fun onDeviceClicked (device : BluetoothDevice) {
         // Get the device MAC address
         val macAddress = device.address
-        isConnected = true
         Toast.makeText(applicationContext, "Connecting: ${device.name}", Toast.LENGTH_SHORT).show()
         bluetoothService?.connect(macAddress)
         //Change Icon in RecyclerView-Element
