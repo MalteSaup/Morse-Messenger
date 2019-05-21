@@ -205,7 +205,8 @@ class MainActivity : OptionsMenuActivity() {
                 Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
                 isConnected = false
                 //Change Icon in RecyclerView-Element
-                bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
+                //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
+                devicesAdapter.notifyDataSetChanged()
             }
         }
         disconnectBtn.isClickable = false
@@ -219,6 +220,9 @@ class MainActivity : OptionsMenuActivity() {
         bluetoothService?.connect(macAddress)
         //Change Icon in RecyclerView-Element
         if(device.bondState == BOND_BONDED ) {
+            /*TODO: Problem lösen (Auch in DevicesAdapter): Being bonded (paired) with a remote device does not necessarily mean the device is currently connected.
+            It just means that the pending procedure was completed at some earlier time, and the link key is still stored locally, ready to use on the next connection*/
+            Log.i ("keks" ,device.bondState.toString())
             for(i in 0 until devicesList.size){
                 if(devicesList[i] == device){
                     var k = devicesList[i]
@@ -228,9 +232,7 @@ class MainActivity : OptionsMenuActivity() {
                 devicesRV.smoothScrollToPosition(0);
                 //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
                 devicesAdapter.notifyDataSetChanged()
-                bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
             }
-
         }
     }
 
@@ -266,15 +268,13 @@ class MainActivity : OptionsMenuActivity() {
 /* TODO:
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
 - Chat-Button geht nicht immer Bugfix
-- Bugfix: Icon, wenn Verbindung steht --> momentan manchmal da, manchmal nicht
-- Bugfix: Color Switch
+- Bugfix: Icon, wenn Verbindung steht (siehe oben + Devices Adapter
+- Bugfix: Color Switch Farbe
 - Ö/Ä/Ü/ß in OE/AE/UE/SS umwandeln
 - nur Großbuchstaben senden
 - CLK:INTEGER , setzt den Clockspeed, also die Geschwindigkeit eines Punktes in Millisekunden. Min:10, max: 2000 (Steuern in der App mit Slider)
 - SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?)
 - ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
-- Info-Icon im Menu, Dialog mit Infos zu verbotenen Buchstaben etc. öffnet sich
-- Nach oben scrollen, wenn Gerät geklickt und an Pos. 1 der Liste verschoben wird
 - Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste
 - Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Kommentare am Code !!!!!!!!!!!!!!!!!!

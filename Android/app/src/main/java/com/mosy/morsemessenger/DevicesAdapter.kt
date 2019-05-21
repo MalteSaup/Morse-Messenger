@@ -1,11 +1,11 @@
 package com.mosy.morsemessenger
 
+import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import kotlinx.android.synthetic.main.bluetooth_list_item.view.*
 
 class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>, val clickListener: (BluetoothDevice) -> Unit) :
@@ -28,6 +28,11 @@ class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>, val clickList
         fun bind (device : BluetoothDevice, clickListener: (BluetoothDevice) -> Unit) {
             itemView.deviceNameTV.text = device.name
             itemView.deviceMacTV.text = device.address.toString()
+            if (device in BluetoothAdapter.getDefaultAdapter().bondedDevices) {
+                itemView.bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
+            } else {
+                itemView.bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
+            }
             itemView.setOnClickListener{clickListener (device)}
         }
 
