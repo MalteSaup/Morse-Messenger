@@ -229,8 +229,9 @@ class MainActivity : AppCompatActivity() {
                     devicesList[0] = k
                 }
                 devicesAdapter.notifyDataSetChanged()
+                bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
             }
-            bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
+
         }
     }
 

@@ -117,7 +117,7 @@ class ChatActivity : AppCompatActivity() {
             d("BTSTRING", "MSG")
             if(checkForNewMessage()){
                 for(i in bluetoothService?.textArray!!){
-                    receiveTextFromOtherDevice(i)
+                    receiveTextFromOtherDevice(i.trim())
                 }
                 bluetoothService?.textArray = ArrayList()
             }
