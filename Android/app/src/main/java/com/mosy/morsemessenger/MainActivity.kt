@@ -87,7 +87,7 @@ class MainActivity : OptionsMenuActivity() {
         return false
     }
 
-    //Toast ob Bluetoothverbindung aufgebaut wurde
+    //Toast if Bluetoothconnection is established or not
     fun messageConnection(msg: Message){
         if (msg.arg1 == 1) {
             disconnectBtn.isClickable = true
@@ -155,6 +155,7 @@ class MainActivity : OptionsMenuActivity() {
         onOffTV.text = getString(R.string.switchStatusOff)
         isConnected = false
     }
+
     //Shows Bluetooth-Devices in list, which have already been connected in the past
     fun showPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
@@ -224,6 +225,8 @@ class MainActivity : OptionsMenuActivity() {
                     devicesList[i] = devicesList[0]
                     devicesList[0] = k
                 }
+                devicesRV.smoothScrollToPosition(0);
+                //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
                 devicesAdapter.notifyDataSetChanged()
                 bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
             }
