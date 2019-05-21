@@ -64,7 +64,10 @@ class ChatActivity : AppCompatActivity() {
 
     fun setBtService(bt: BluetoothService?) {
         bluetoothService = bt
-        bluetoothService?.write(username + "/n")
+
+        //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
+        //send username to chat-partner
+        bluetoothService?.write("USR:" + username + "/n")
         bluetoothService?.inChat = true
 
     }
@@ -85,10 +88,6 @@ class ChatActivity : AppCompatActivity() {
         val intent: Intent = getIntent()
         username = intent.getStringExtra("username")
         Log.i("TEST", username)
-
-        //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
-        //send username to chat-partner
-        bluetoothService?.write("ThisIsTheName3795568" + username + "/n")
 
         sendButton.setOnClickListener {
             var text: String = textInput.text.toString()
@@ -131,10 +130,11 @@ class ChatActivity : AppCompatActivity() {
             d("BTSTRING", msg)
             if(msg.length > 1){
                 //checks if message is username of chat-partner
-                if (msg.contains("ThisIsTheName3795568", ignoreCase = true)) {
+                if (msg.contains("USR:", ignoreCase = true)) {
                     //sets username of chat-partner
-                    val nameString: String = msg.removePrefix("ThisIsTheName3795568")
+                    val nameString: String = msg.removePrefix("usr:")
                     nameDisplay.text = nameString
+                    return
                 }
                 messageList.add(Message(-1, msg))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
