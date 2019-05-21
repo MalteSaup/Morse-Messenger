@@ -128,7 +128,7 @@ class ChatActivity : OptionsMenuActivity() {
                 //checks if message is username of chat-partner
                 if (msg.contains("USR:", ignoreCase = true)) {
                     //sets username of chat-partner
-                    val nameString: String = msg.removePrefix("usr:")
+                    var nameString: String = msg.removePrefix("usr:")
                     nameDisplay.text = nameString
                     return
                 }
