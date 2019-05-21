@@ -265,6 +265,10 @@ class MainActivity : AppCompatActivity() {
 /* TODO:
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
 - Chat-Button geht nicht immer Bugfix
-- Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank löschen
+- Bugfix: Icon, wenn Verbindung steht --> momentan manchmal da, manchmal nicht
+- Info-Icon im Menu, Dialog mit Infos zu verbotenen Buchstaben etc. öffnet sich
+- Nach oben scrollen, wenn Gerät geklickt und an Pos. 1 der Liste verschoben wird
+- Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste
+- Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
  */
