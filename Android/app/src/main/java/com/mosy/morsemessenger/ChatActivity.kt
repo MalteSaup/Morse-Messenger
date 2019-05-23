@@ -109,9 +109,8 @@ class ChatActivity : OptionsMenuActivity() {
         //Checks if messages exist and puts them into messenger
         mHandler = Handler()
         mRunnable = Runnable{
-            d("BTSTRING", "MSG")
-            if(checkForNewMessage()){
-                for(i in bluetoothService?.textArray!!){
+            if(checkForNewMessage()) {
+                for (i in bluetoothService?.textArray!!) {
                     receiveTextFromOtherDevice(i.trim())
                 }
                 bluetoothService?.textArray = ArrayList()

@@ -92,6 +92,7 @@ class MainActivity : OptionsMenuActivity() {
         if (msg.arg1 == 1) {
             disconnectBtn.isClickable = true
             isConnected = true
+            bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
             Toast.makeText(applicationContext, "Verbindung aufgebaut: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
         }
         else {
@@ -159,8 +160,11 @@ class MainActivity : OptionsMenuActivity() {
     //Shows Bluetooth-Devices in list, which have already been connected in the past
     fun showPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
-            for (device in bluetoothService?.pairedDevices!!)
-                devicesList.add(device)
+            for (device in bluetoothService?.pairedDevices!!) {
+                var check = true
+                for (i in devicesList) if (i == device) check = false
+                if(check) devicesList.add(device)
+            }
             // add the name to the list
             devicesAdapter.notifyItemInserted(devicesList.size -1)
 
@@ -205,7 +209,7 @@ class MainActivity : OptionsMenuActivity() {
                 Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
                 isConnected = false
                 //Change Icon in RecyclerView-Element
-                //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
+                bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
                 devicesAdapter.notifyDataSetChanged()
             }
         }
@@ -268,12 +272,16 @@ class MainActivity : OptionsMenuActivity() {
 /* TODO:
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
 - Chat-Button geht nicht immer Bugfix
-- Bugfix: Icon, wenn Verbindung steht (siehe oben + Devices Adapter
 - Bugfix: Color Switch Farbe
 - CLK:INTEGER , setzt den Clockspeed, also die Geschwindigkeit eines Punktes in Millisekunden. Min:10, max: 2000 (Steuern in der App mit Slider)
 - SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?)
 - ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
-- Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste
 - Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
+ */
+
+/* TODO:
+Tests (Zuwenig BT Geräte in der Nähe):
+    - Symbol richtig angezeigt bei Verbindung
+    - Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste
  */

@@ -28,11 +28,6 @@ class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>, val clickList
         fun bind (device : BluetoothDevice, clickListener: (BluetoothDevice) -> Unit) {
             itemView.deviceNameTV.text = device.name
             itemView.deviceMacTV.text = device.address.toString()
-            if (device in BluetoothAdapter.getDefaultAdapter().bondedDevices) {
-                itemView.bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
-            } else {
-                itemView.bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
-            }
             itemView.setOnClickListener{clickListener (device)}
         }
 
