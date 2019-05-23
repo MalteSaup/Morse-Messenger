@@ -1,10 +1,10 @@
 package com.mosy.morsemessenger
 
 import android.app.ActivityManager
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED
+import android.content.*
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -118,8 +118,21 @@ class ChatActivity : OptionsMenuActivity() {
             mHandler.postDelayed(this.mRunnable, 100)
         }
         mRunnable.run()
+
+        var filter = IntentFilter()
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+        this.registerReceiver(mReceiver, filter)
     }
 
+    val mReceiver = object : BroadcastReceiver(){ //Feuert Nachricht bei Verlust BT Verbindung, allerdings braucht es ziemlich lange. (>15 Sekunden)
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            var action = p1?.action
+            var device = p1?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
+            if(ACTION_ACL_DISCONNECTED.equals(action)) Log.d("BTSTATE", "HALLO !!!!!!")
+            Log.d("BTSTATE", "CHECK")
+        }
+
+    }
     fun receiveTextFromOtherDevice(msg : String) {
         if(!msg.isBlank()){
             d("BTSTRING", msg)
