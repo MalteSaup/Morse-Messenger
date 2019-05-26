@@ -161,9 +161,7 @@ class MainActivity : OptionsMenuActivity() {
     fun showPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
             for (device in bluetoothService?.pairedDevices!!) {
-                var check = true
-                for (i in devicesList) if (i == device) check = false
-                if(check) devicesList.add(device)
+               devicesList.add(device)
             }
             // add the name to the list
             devicesAdapter.notifyItemInserted(devicesList.size -1)
@@ -192,9 +190,12 @@ class MainActivity : OptionsMenuActivity() {
             val action = intent.action
             if (BluetoothDevice.ACTION_FOUND == action) {
                 val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-                devicesList.add(device)
-                // add the name to the list
-                devicesAdapter.notifyItemInserted(devicesList.size -1)
+
+                if(!devicesList.contains(device)){
+                    // add the name to the list
+                    devicesList.add(device)
+                    devicesAdapter.notifyItemInserted(devicesList.size -1)
+                }
             }
         }
     }
@@ -283,5 +284,4 @@ class MainActivity : OptionsMenuActivity() {
 /* TODO:
 Tests (Zuwenig BT Geräte in der Nähe):
     - Symbol richtig angezeigt bei Verbindung TODO: getestet, funktioniert nicht bzw. nur bei der ersten Verbindung
-    - Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste TODO: getestet, funktioniert nicht
         */
