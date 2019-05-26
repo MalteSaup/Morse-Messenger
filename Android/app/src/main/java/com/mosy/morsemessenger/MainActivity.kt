@@ -282,6 +282,6 @@ class MainActivity : OptionsMenuActivity() {
 
 /* TODO:
 Tests (Zuwenig BT Geräte in der Nähe):
-    - Symbol richtig angezeigt bei Verbindung
-    - Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste
- */
+    - Symbol richtig angezeigt bei Verbindung TODO: getestet, funktioniert nicht bzw. nur bei der ersten Verbindung
+    - Dopplungen der Geräte in der Liste vermeiden --> Vorm hinzufügen filtern, ob MAC-Adresse bereits in Liste TODO: getestet, funktioniert nicht
+        */
