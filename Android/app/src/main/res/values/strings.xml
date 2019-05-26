@@ -8,6 +8,7 @@
     <string name="name">Name</string>
     <string name="switchStatusOff">off</string>
     <string name="switchStatusOn">on</string>
+    <string name="speedHeadline">Übertragungsgeschwindigkeit</string>
     <string name="discoverDevices">Suche Geräte</string>
     <string name="disconnect">Trennen</string>
     <string name="to_chat">Zum Chat</string>
@@ -25,10 +26,11 @@
         - Morsealphabet hat nur Kleinbuchstaben \n
         - Manche Sonderzeichen gibt es nicht. \n
         - Erlaubte Charaktere: a-z 0-9 . , ? \n
-        - usw.
+        - usw.    <!--TODO: mit Text füllen + hübsch machen-->
     </string>
+
     <string name="title_activity_options_menu">OptionsMenuActivity</string>
-    <!--TODO: mit Text füllen + hübsch machen-->
+
 
 
 </resources>

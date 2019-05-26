@@ -143,6 +143,8 @@ class BluetoothService (private val handler: Handler) {
         fun write(bytes: ByteArray) {
             try {
                 mmOutStream.write(bytes)
+                //SENT: Message was sent. Check in MessageWindo
+                mmOutStream.write("SENT".toByteArray())
             } catch (e: IOException) {
                 Log.e(TAG, "Error occurred when sending data", e)
             }

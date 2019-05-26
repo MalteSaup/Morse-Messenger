@@ -24,17 +24,56 @@
             android:importantForAutofill="no"
             android:hint="@string/name" tools:targetApi="o"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp" android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
             app:layout_constraintTop_toBottomOf="@+id/nameTV"
     />
     <TextView
             android:text="@string/bluetooth"
             android:layout_width="0dp"
             android:layout_height="wrap_content" android:id="@+id/bluetoothTV"
-            android:textSize="20sp" android:textColor="@color/colorTextW"
-            android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/nameET"
+            android:textSize="18sp" android:textColor="@color/colorTextW"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"/>
+            android:layout_marginTop="8dp"/>
+    <TextView
+            android:text="@string/speedHeadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/SpeedTV"
+            android:textColor="@color/colorTextW"
+            app:layout_constraintTop_toBottomOf="@+id/nameET" android:textSize="18sp"
+            android:layout_marginTop="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"/>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" app:layout_constraintTop_toBottomOf="@+id/SpeedTV"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:id="@+id/linearLayout2" android:layout_marginTop="-4dp">
+        <SeekBar
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/sendSpeedSB"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="0dp"
+                android:layout_weight="1"
+                android:progress="1000" android:max="2000"/>
+        <TextView
+                android:text="ms"
+                android:layout_width="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/sendSpeedTV"
+                app:layout_constraintStart_toEndOf="@+id/bluetoothSwitch"
+                android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintHorizontal_bias="0.568"
+                app:layout_constraintTop_toBottomOf="@+id/bluetoothTV"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/colorTextW"
+                android:textSize="18sp"
+                android:layout_weight="1"/>
+    </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -47,20 +86,27 @@
             android:id="@+id/linearLayout">
         <Switch
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/bluetoothSwitch"
+                android:layout_height="wrap_content"
+                android:id="@+id/bluetoothSwitch"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_marginStart="10dp"
                 android:switchMinWidth="70dp"
-                android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/bluetoothTV"/>
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/bluetoothTV"/>
         <TextView
                 android:text="@string/switchStatusOff"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/onOffTV"
-                app:layout_constraintStart_toEndOf="@+id/bluetoothSwitch" android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="16dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/onOffTV"
+                app:layout_constraintStart_toEndOf="@+id/bluetoothSwitch"
+                android:layout_marginStart="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="16dp"
                 app:layout_constraintHorizontal_bias="0.568"
-                app:layout_constraintTop_toBottomOf="@+id/bluetoothTV" android:layout_marginTop="16dp"
-                android:textColor="@color/colorTextW" android:textSize="18sp"/>
+                app:layout_constraintTop_toBottomOf="@+id/bluetoothTV"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/colorTextW"
+                android:textSize="18sp"/>
     </LinearLayout>
     <Button
             android:text="@string/discoverDevices"
@@ -88,12 +134,16 @@
     <android.support.v7.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" app:layout_constraintEnd_toEndOf="parent"
+            android:minHeight="100dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/devicesRV"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/chatBtn"
-            android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/searchBtn"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/searchBtn"
             android:scrollbars="vertical"/>
     <Button
             android:text="@string/to_chat"

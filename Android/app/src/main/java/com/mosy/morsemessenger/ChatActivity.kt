@@ -20,6 +20,7 @@ class ChatActivity : OptionsMenuActivity() {
     var messageList: ArrayList<Message> = ArrayList()
     var messageAdapter: MessageAdapter = MessageAdapter(messageList)
     lateinit var username: String
+    lateinit var speed : String
     private var myService: BluetoothConnectionService? = null
     private var isBound = false
     private var bluetoothService: BluetoothService? = null
@@ -62,10 +63,10 @@ class ChatActivity : OptionsMenuActivity() {
         bluetoothService = bt
 
         //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
-        //send username to chat-partner
+        //send username to chat-partner + speed to arduino
         bluetoothService?.write("USR:" + username + "/n")
+        bluetoothService?.write("CLK:" + speed + "/n")
         bluetoothService?.inChat = true
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,13 +84,14 @@ class ChatActivity : OptionsMenuActivity() {
 
         val intent: Intent = getIntent()
         username = intent.getStringExtra("username")
-        Log.i("TEST", username)
+        speed = intent.getStringExtra("speed")
+        Log.i("TEST", username + " " + speed)
 
         sendButton.setOnClickListener {
             var text: String = textInput.text.toString()
             if (isBound) d("TEST", "TRUE BOUND")
             else d("TEST", "FALSE BOUND")
-            var message: Message = Message(1, text)
+            var message = Message(1, text)
 
             //Message aus text an Arduino senden
             bluetoothService?.write(text + "/n");

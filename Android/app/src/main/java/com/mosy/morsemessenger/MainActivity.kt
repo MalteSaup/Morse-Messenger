@@ -47,9 +47,10 @@ class MainActivity : OptionsMenuActivity() {
 
         implementSwitchOnClickListener()
         initializeBluetoothService()
+        initializeSeekBar()
         disconnectBtn.isClickable = false
 
-        mHandler = Handler()  //Handler der mit dem mRunnable prüft ob Bluetooth an ist und dementsprechend den Switch an oder aus schaltet
+        mHandler = Handler()  //to check with mRunnable, if bluetooth is enabled; switches Switch on/off
         mRunnable = Runnable{
             if(checkForBluetooth() && !btSwitch.isChecked){
                 onOffTV.text = getString(R.string.switchStatusOn)
@@ -141,9 +142,6 @@ class MainActivity : OptionsMenuActivity() {
         if (bluetoothService?.enabled == false) {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
-            /*Wenn man den Switch auf an stellt, wird ein Dialog gezeigt (Zulassen/Ablehnen)
-            * TODO: Wenn man auf Ablehnen klickt, muss der Switch wieder auf off gestellt werden */
-
         }
         onOffTV.text = getString(R.string.switchStatusOn)
     }
@@ -250,9 +248,32 @@ class MainActivity : OptionsMenuActivity() {
             val intent = Intent(this, ChatActivity::class.java)
             myService?.setBt(bluetoothService)
             intent.putExtra("username", nameET.text.toString())
+            intent.putExtra("speed", sendSpeedSB.progress.toString())
             startActivity(intent)
         }
         else Toast.makeText(applicationContext, "Name und/oder Geräteverbindung fehlt", Toast.LENGTH_SHORT).show()
+    }
+
+    fun initializeSeekBar() {
+
+        sendSpeedSB.max = 2000
+        sendSpeedTV.text = sendSpeedSB.progress.toString() + " ms"
+
+        sendSpeedSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                //minimum = 10; (Because api-level <26 sendSpeedSB.min does not work)
+                if (progress <10) {
+                    sendSpeedSB.post(Runnable { sendSpeedSB.progress = 10 })
+                }
+                sendSpeedTV.text = progress.toString() + " ms"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
     }
 
     private val myConnection = object : ServiceConnection {
@@ -274,8 +295,7 @@ class MainActivity : OptionsMenuActivity() {
 - App zurück zu Startbildschirm, wenn Verbindung abreißt
 - Chat-Button geht nicht immer Bugfix
 - Bugfix: Color Switch Farbe
-- CLK:INTEGER , setzt den Clockspeed, also die Geschwindigkeit eines Punktes in Millisekunden. Min:10, max: 2000 (Steuern in der App mit Slider)
-- SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?)
+- SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) siehe write in Bluetooth-Service
 - ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
 - Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
