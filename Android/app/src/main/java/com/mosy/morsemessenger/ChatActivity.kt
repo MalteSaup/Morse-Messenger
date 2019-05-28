@@ -87,6 +87,8 @@ class ChatActivity : OptionsMenuActivity() {
         speed = intent.getStringExtra("speed")
         Log.i("TEST", username + " " + speed)
 
+        scrollToBottomWhenKeyboardOpen()
+
         sendButton.setOnClickListener {
             var text: String = textInput.text.toString()
             if (isBound) d("TEST", "TRUE BOUND")
@@ -125,6 +127,16 @@ class ChatActivity : OptionsMenuActivity() {
         var filter = IntentFilter()
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         this.registerReceiver(mReceiver, filter)
+    }
+
+    fun scrollToBottomWhenKeyboardOpen () {
+        chatBox.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            if (bottom < oldBottom) {
+                chatBox.postDelayed(Runnable {
+                    chatBox.smoothScrollToPosition(messageList.size)
+                }, 100)
+            }
+        };
     }
 
     val mReceiver = object : BroadcastReceiver(){ //Feuert Nachricht bei Verlust BT Verbindung, allerdings braucht es ziemlich lange. (>15 Sekunden)

@@ -88,7 +88,7 @@ class MainActivity : OptionsMenuActivity() {
         return false
     }
 
-    //Toast if Bluetoothconnection is established or not
+    //Toast if Bluetooth-Connection is established or not
     fun messageConnection(msg: Message){
         if (msg.arg1 == 1) {
             disconnectBtn.isClickable = true
@@ -102,7 +102,7 @@ class MainActivity : OptionsMenuActivity() {
         }
     }
 
-    //Checkt ob Hintergrund Service läuft
+    //Check if background service is running
     fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
@@ -171,7 +171,6 @@ class MainActivity : OptionsMenuActivity() {
 
     //Find Bluetooth-Devices and show them in List
     fun discoverPairedDevices(view: View){
-
         if (bluetoothService?.enabled!!) {
             bluetoothService?.discover()
             Toast.makeText(baseContext, "Suche Geräte", Toast.LENGTH_SHORT).show()
@@ -182,7 +181,7 @@ class MainActivity : OptionsMenuActivity() {
             Toast.makeText(applicationContext, "Bluetooth ist aus", Toast.LENGTH_SHORT).show()
     }
 
-    //Fügt vorhandene Bluetooth Geräte in der Umgebung dem Recycler View hinzu
+    //Inserts nearby bluetooth-devices into recyclerview
     private val blReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
@@ -190,7 +189,7 @@ class MainActivity : OptionsMenuActivity() {
                 val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
 
                 if(!devicesList.contains(device)){
-                    // add the name to the list
+                    // add the name to the list if it is not already in the list
                     devicesList.add(device)
                     devicesAdapter.notifyItemInserted(devicesList.size -1)
                 }
@@ -226,6 +225,8 @@ class MainActivity : OptionsMenuActivity() {
             /*TODO: Problem lösen (Auch in DevicesAdapter): Being bonded (paired) with a remote device does not necessarily mean the device is currently connected.
             It just means that the pending procedure was completed at some earlier time, and the link key is still stored locally, ready to use on the next connection*/
             Log.i ("keks" ,device.bondState.toString())
+
+            //places clicked device on first position in list
             for(i in 0 until devicesList.size){
                 if(devicesList[i] == device){
                     var k = devicesList[i]
@@ -301,7 +302,6 @@ Prioritäten: 1= sehr wichtig
 - 2 Wenn String zurück kommt, ist Farbe der Sprechblase falsch herum --> id wird falsch gesetzt?????
 - 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) siehe write in Bluetooth-Service
 - 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
-- 3 recyclerview hochscrollen, wenn Tastatur geöffnet wird
 - Dialog mit informativem Text füllen
 - Bugfix: Color Switch Farbe
 - Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
