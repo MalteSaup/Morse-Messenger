@@ -256,7 +256,7 @@ class MainActivity : OptionsMenuActivity() {
 
     fun initializeSeekBar() {
 
-        sendSpeedSB.max = 2000
+        sendSpeedSB.max = 500
         sendSpeedTV.text = sendSpeedSB.progress.toString() + " ms"
 
         sendSpeedSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -292,16 +292,18 @@ class MainActivity : OptionsMenuActivity() {
 }
 
 /* TODO:
-- App zurück zu Startbildschirm, wenn Verbindung abreißt
-- Chat-Button geht nicht immer Bugfix
+Prioritäten: 1= sehr wichtig
+- 1 ankommende Nachricht nicht doppelt bzw. inkl. letzter Nachricht senden
+- 1 App zurück zu Startbildschirm, wenn Verbindung abreißt
+- 1 Chat-Button geht nicht immer Bugfix--> Bug immer nur beim ersten Start der App
+- 1 Kein Leerzeichen an Ende des Strings beim senden. Vor allem Problem, bei Autovervollständigung
+- 2 Symbol richtig angezeigt bei Verbindung --> getestet, funktioniert nicht bzw. nur bei der ersten Verbindung --> Exception wird angezeigt
+- 2 Wenn String zurück kommt, ist Farbe der Sprechblase falsch herum --> id wird falsch gesetzt?????
+- 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) siehe write in Bluetooth-Service
+- 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
+- 3 recyclerview hochscrollen, wenn Tastatur geöffnet wird
+- Dialog mit informativem Text füllen
 - Bugfix: Color Switch Farbe
-- SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) siehe write in Bluetooth-Service
-- ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
 - Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
- */
-
-/* TODO:
-Tests (Zuwenig BT Geräte in der Nähe):
-    - Symbol richtig angezeigt bei Verbindung TODO: getestet, funktioniert nicht bzw. nur bei der ersten Verbindung
-        */
+*/

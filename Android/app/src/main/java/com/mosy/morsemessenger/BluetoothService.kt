@@ -121,15 +121,19 @@ class BluetoothService (private val handler: Handler) {
                 // Read from the InputStream.
                 numBytes = try {
                     mmInStream.read(mmBuffer)
+                    Log.i("LEERZEICHEN0", "Input" + mmBuffer.toString())
                 } catch (e: IOException) {
                     Log.d(TAG, "Input stream was disconnected", e)
                     break
                 }
                 stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
+                Log.i("LEERZEICHEN01", "Input" + stringBuilder.toString())
                 if(inChat){
-                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1  && stringBuilder.endsWith("\r")){
+                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1  /*&& stringBuilder.endsWith("/r")*/){
                        textArray.add(stringBuilder.toString())
-                       textArray[textArray.size-1].replace("\n", "")
+                       Log.i("LEERZEICHEN", stringBuilder.toString())
+                       textArray[textArray.size-1].replace("/n", "")
+                       Log.i("LEERZEICHEN2", textArray[textArray.size-1])
                        stringBuilder.clear()
 
                    }
@@ -144,7 +148,7 @@ class BluetoothService (private val handler: Handler) {
             try {
                 mmOutStream.write(bytes)
                 //SENT: Message was sent. Check in MessageWindo
-                mmOutStream.write("SENT".toByteArray())
+                //mmOutStream.write("SENT".toByteArray())
             } catch (e: IOException) {
                 Log.e(TAG, "Error occurred when sending data", e)
             }
@@ -162,7 +166,8 @@ class BluetoothService (private val handler: Handler) {
 
     fun write(input: String) {
         var inputNoSpecialChars = checkSpecialCharacters(input)
-        val bytes = inputNoSpecialChars.toUpperCase().toByteArray()           //converts entered String into bytes
+        var x = inputNoSpecialChars.toUpperCase() + "/n"
+        val bytes = x.toByteArray()           //converts entered String into bytes
         try {
             connectedThread?.write(bytes)
         } catch (e: IOException) {

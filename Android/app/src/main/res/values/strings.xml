@@ -26,7 +26,7 @@
         - Morsealphabet hat nur Kleinbuchstaben \n
         - Manche Sonderzeichen gibt es nicht. \n
         - Erlaubte Charaktere: a-z 0-9 . , ? \n
-        - usw.    <!--TODO: mit Text füllen + hübsch machen-->
+        - usw.
     </string>
 
     <string name="title_activity_options_menu">OptionsMenuActivity</string>

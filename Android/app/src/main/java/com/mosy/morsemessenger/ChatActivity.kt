@@ -64,8 +64,8 @@ class ChatActivity : OptionsMenuActivity() {
 
         //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
         //send username to chat-partner + speed to arduino
-        bluetoothService?.write("USR:" + username + "/n")
-        bluetoothService?.write("CLK:" + speed + "/n")
+        //bluetoothService?.write("USR:" + username + "/n")
+        bluetoothService?.write("CLK:" + speed  )
         bluetoothService?.inChat = true
     }
 
@@ -94,14 +94,15 @@ class ChatActivity : OptionsMenuActivity() {
             var message = Message(1, text)
 
             //Message aus text an Arduino senden
-            bluetoothService?.write(text + "/n");
+            bluetoothService?.write(text );
 
-            //scrolls recyclerView to the bottom
-            chatBox.smoothScrollToPosition(messageList.size);
 
             //Update RecyclerView
             messageList.add(message)
             messageAdapter.notifyItemInserted(messageList.size - 1)
+
+            //scrolls recyclerView to the bottom
+            chatBox.smoothScrollToPosition(messageList.size);
 
             //delete text in textInput
             textInput.setText("")
@@ -146,7 +147,7 @@ class ChatActivity : OptionsMenuActivity() {
                     nameDisplay.text = nameString
                     return
                 }
-                messageList.add(Message(-1, msg))
+                messageList.add(Message(0, msg))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
             }
         }
