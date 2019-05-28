@@ -21,6 +21,9 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
         if (message.id == 0) {
             holder.textTV?.setBackgroundResource( R.drawable.messageleft)
             holder.textTV?.setTextColor(ContextCompat.getColor(holder.textTV.context , R.color.colorTextW))
+        } else {
+            holder.textTV?.setBackgroundResource( R.drawable.messageright)
+            holder.textTV?.setTextColor(ContextCompat.getColor(holder.textTV.context , R.color.colorTextB))
         }
     }
 
