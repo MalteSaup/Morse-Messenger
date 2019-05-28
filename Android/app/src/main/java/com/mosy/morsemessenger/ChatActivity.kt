@@ -21,11 +21,13 @@ class ChatActivity : OptionsMenuActivity() {
     var messageAdapter: MessageAdapter = MessageAdapter(messageList)
     lateinit var username: String
     lateinit var speed : String
+    var text: String = ""
     private var myService: BluetoothConnectionService? = null
     private var isBound = false
     private var bluetoothService: BluetoothService? = null
     lateinit var mRunnable: Runnable
     lateinit var mHandler: Handler
+
 
 
     fun isServiceRunning(serviceClass: Class<*>): Boolean {
@@ -84,15 +86,21 @@ class ChatActivity : OptionsMenuActivity() {
 
         val intent: Intent = getIntent()
         username = intent.getStringExtra("username")
+        username = deleteSpaceAtEnd(username)
         speed = intent.getStringExtra("speed")
-        Log.i("TEST", username + " " + speed)
+        Log.i("TEST", username + "d " + speed)
 
         scrollToBottomWhenKeyboardOpen()
 
         sendButton.setOnClickListener {
-            var text: String = textInput.text.toString()
+            var textMessage: String = textInput.text.toString()
             if (isBound) d("TEST", "TRUE BOUND")
             else d("TEST", "FALSE BOUND")
+
+            //if last chars are spaces: delete spaces
+            text = deleteSpaceAtEnd(textMessage)
+            Log.i("TEST", text +"1")
+
             var message = Message(1, text)
 
             //Message aus text an Arduino senden
@@ -127,6 +135,18 @@ class ChatActivity : OptionsMenuActivity() {
         var filter = IntentFilter()
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         this.registerReceiver(mReceiver, filter)
+    }
+
+    fun deleteSpaceAtEnd(textMessage: String) : String {
+        val charArray : CharArray = textMessage.takeLast(1).toCharArray()
+        val lastChar : Char = charArray[0]
+        val isSpace : Boolean = Character.isWhitespace(lastChar)
+        if (isSpace) {
+            text = textMessage.dropLast(1)
+            deleteSpaceAtEnd(text)
+            return text
+        }
+        else { return textMessage }
     }
 
     fun scrollToBottomWhenKeyboardOpen () {

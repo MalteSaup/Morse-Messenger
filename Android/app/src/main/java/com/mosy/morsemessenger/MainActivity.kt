@@ -297,7 +297,6 @@ Prioritäten: 1= sehr wichtig
 - 1 ankommende Nachricht nicht doppelt bzw. inkl. letzter Nachricht senden
 - 1 App zurück zu Startbildschirm, wenn Verbindung abreißt
 - 1 Chat-Button geht nicht immer Bugfix--> Bug immer nur beim ersten Start der App
-- 1 Kein Leerzeichen an Ende des Strings beim senden. Vor allem Problem, bei Autovervollständigung
 - 2 Symbol richtig angezeigt bei Verbindung --> getestet, funktioniert nicht bzw. nur bei der ersten Verbindung --> Exception wird angezeigt
 - 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) siehe write in Bluetooth-Service
 - 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
