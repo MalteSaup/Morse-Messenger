@@ -302,7 +302,6 @@ Prioritäten: 1= sehr wichtig
 - 2 Wenn String zurück kommt, ist Farbe der Sprechblase falsch herum --> id wird falsch gesetzt?????
 - 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) siehe write in Bluetooth-Service
 - 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
-- Dialog mit informativem Text füllen
 - Bugfix: Color Switch Farbe
 - Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Kommentare am Code !!!!!!!!!!!!!!!!!!

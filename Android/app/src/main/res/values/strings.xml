@@ -20,14 +20,13 @@
     <string name="rules">Info</string>
 
     <!--Dialog Rules-->
-    <string name="rulesText">
-        TODO: Erklären, was MorseMessenger macht \n\n
-        Besonderheiten im Vergleich zu einem normalen Chat: \n
-        - Morsealphabet hat nur Kleinbuchstaben \n
-        - Manche Sonderzeichen gibt es nicht. \n
-        - Erlaubte Charaktere: a-z 0-9 . , ? \n
-        - usw.
-    </string>
+    <string name="rulesText">Der Morse-Messenger überträgt deine Nachricht mit Hilfe eines Arduinos und Taschenlampen als Morse-Code an deine/n Chat-Partner/in.
+        \n\nVerbinde dich mit einem Arduino (Morse oder Morse2), gebe deinen Namen ein und stelle eine Übertragungsgeschwindigkeit für die Morse-Mitteilungen ein (10=schnell, 500=langsam).
+        \n\nBesonderheiten im Vergleich zu einem normalen Chat:
+        \n► Das Morsealphabet hat nur Kleinbuchstaben
+        \n► Manche Sonderzeichen gibt es nicht - z.B. ö,ä,ü,ß.
+        \n► Erlaubte Zeichen: a-z 0-9 . , ? \n
+</string>
 
     <string name="title_activity_options_menu">OptionsMenuActivity</string>
 
