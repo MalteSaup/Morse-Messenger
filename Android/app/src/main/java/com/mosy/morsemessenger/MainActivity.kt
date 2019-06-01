@@ -65,6 +65,13 @@ class MainActivity : OptionsMenuActivity() {
         mRunnable.run()
     }
 
+    override fun onResume() {
+        super.onResume()
+        try{disconnectDevice(findViewById(R.id.disconnectBtn))}
+        catch (e: Exception){}
+
+    }
+
     val handler = object: Handler() {
         override fun handleMessage(msg: Message) {
             when(msg.what){
@@ -242,9 +249,8 @@ class MainActivity : OptionsMenuActivity() {
 
     //Click-Listener for toChat-Button. Starts the ChatActivity.
     fun implementChatBtnClickListener(view: View) {
-
         //Can only open new Activity, when nameET is filled and bluetooth-device is connected
-        if (!nameET.text.isBlank() && bluetoothService?.enabled!! && bluetoothService?.pairedDevices!=null && bluetoothService?.pairedDevices!!.isNotEmpty() && isConnected) {
+        if (!nameET.text.isBlank() && isConnected) {
             Log.i("TEST pairedDevices", bluetoothService?.pairedDevices.toString())
             val intent = Intent(this, ChatActivity::class.java)
             myService?.setBt(bluetoothService)
@@ -295,7 +301,7 @@ class MainActivity : OptionsMenuActivity() {
 /* TODO:
 Prioritäten: 1= sehr wichtig
 - 1 ankommende Nachricht nicht doppelt bzw. inkl. letzter Nachricht senden
-- 1 App zurück zu Startbildschirm, wenn Verbindung abreißt
+- 1 App zurück zu Startbildschirm, wenn Verbindung abreißt (Sehr Langsam aber da)
 - 1 Chat-Button geht nicht immer Bugfix--> Bug immer nur beim ersten Start der App
 - 2 Symbol richtig angezeigt bei Verbindung --> getestet, funktioniert nicht bzw. nur bei der ersten Verbindung --> Exception wird angezeigt
 - 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) siehe write in Bluetooth-Service

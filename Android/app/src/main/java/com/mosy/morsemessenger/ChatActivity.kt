@@ -3,6 +3,7 @@ package com.mosy.morsemessenger
 import android.app.ActivityManager
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED
+import android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED
 import android.content.*
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -71,6 +72,10 @@ class ChatActivity : OptionsMenuActivity() {
         bluetoothService?.inChat = true
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(mReceiver)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -134,6 +139,7 @@ class ChatActivity : OptionsMenuActivity() {
 
         var filter = IntentFilter()
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED)
         this.registerReceiver(mReceiver, filter)
     }
 
@@ -163,11 +169,12 @@ class ChatActivity : OptionsMenuActivity() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             var action = p1?.action
             var device = p1?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-            if(ACTION_ACL_DISCONNECTED.equals(action)) Log.d("BTSTATE", "HALLO !!!!!!")
+            if(ACTION_ACL_DISCONNECTED.equals(action) || ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) finish()
             Log.d("BTSTATE", "CHECK")
         }
 
     }
+
     fun receiveTextFromOtherDevice(msg : String) {
         if(!msg.isBlank()){
             d("BTSTRING", msg)
