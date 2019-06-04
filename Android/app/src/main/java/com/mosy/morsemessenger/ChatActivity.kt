@@ -67,8 +67,8 @@ class ChatActivity : OptionsMenuActivity() {
 
         //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
         //send username to chat-partner + speed to arduino
-        //bluetoothService?.write("USR:" + username + "/n")
-        bluetoothService?.write("CLK:" + speed  )
+        bluetoothService?.write("USR:" + username )
+        bluetoothService?.write("CLK:" + speed )
         bluetoothService?.inChat = true
     }
 
@@ -110,7 +110,6 @@ class ChatActivity : OptionsMenuActivity() {
 
             //Message aus text an Arduino senden
             bluetoothService?.write(text );
-
 
             //Update RecyclerView
             messageList.add(message)

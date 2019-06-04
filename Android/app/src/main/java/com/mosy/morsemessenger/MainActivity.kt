@@ -304,7 +304,6 @@ Prioritäten: 1= sehr wichtig
 - 1 Chat-Button geht nicht immer Bugfix --> Bug immer nur beim ersten Start der App
 - 2 Symbol richtig angezeigt bei Verbindung --> getestet, funktioniert nicht bzw. nur bei der ersten Verbindung --> intensiver TESTEN
 - 2 Verbindung reißt nicht ab, wenn man zu Startbildschirm zurück geht
-- 2 Name senden wieder einblenden
 - 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) --> von Arduino empfangen und anzeigen
 - 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?) --> von Arduino empfangen und anzeigen
 - 4 App zurück zu Startbildschirm, wenn Verbindung abreißt --> Performance verbessern
