@@ -187,6 +187,8 @@ class ChatActivity : OptionsMenuActivity() {
                 }
                 messageList.add(Message(0, msg))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
+                //scrolls recyclerView to the bottom
+                chatBox.smoothScrollToPosition(messageList.size);
             }
         }
     }
