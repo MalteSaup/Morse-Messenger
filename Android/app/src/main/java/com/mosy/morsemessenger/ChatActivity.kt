@@ -185,8 +185,20 @@ class ChatActivity : OptionsMenuActivity() {
                     nameDisplay.text = nameString
                     return
                 }
+                if (msg.contentEquals("SENT")){
+                    //SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) --> von Arduino empfangen und anzeigen
+                    //get last message_list_item with message id=1
+                    //make check_black_24dp icon visible
+                    return
+                }
+                if (msg.contentEquals("ACK")){
+                    //ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?) --> von Arduino empfangen und anzeigen
+                    //get last message_list_item with message id=1
+                    //color check_black_24dp icon green
+                }
                 messageList.add(Message(0, msg))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
+
                 //scrolls recyclerView to the bottom
                 chatBox.smoothScrollToPosition(messageList.size);
             }
