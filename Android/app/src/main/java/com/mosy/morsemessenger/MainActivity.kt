@@ -300,13 +300,15 @@ class MainActivity : OptionsMenuActivity() {
 
 /* TODO:
 Prioritäten: 1= sehr wichtig
-- 1 ankommende Nachricht nicht doppelt bzw. inkl. letzter Nachricht senden
-- 1 App zurück zu Startbildschirm, wenn Verbindung abreißt (Sehr Langsam aber da)
-- 1 Chat-Button geht nicht immer Bugfix--> Bug immer nur beim ersten Start der App
-- 2 Symbol richtig angezeigt bei Verbindung --> getestet, funktioniert nicht bzw. nur bei der ersten Verbindung --> Exception wird angezeigt
-- 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) siehe write in Bluetooth-Service
-- 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?)
+- 1 ankommende Nachricht nicht doppelt bzw. ohne inkl. letzter Nachricht senden --> /r Problem
+- 1 Chat-Button geht nicht immer Bugfix --> Bug immer nur beim ersten Start der App
+- 2 Symbol richtig angezeigt bei Verbindung --> getestet, funktioniert nicht bzw. nur bei der ersten Verbindung --> intensiver TESTEN
+- 2 Verbindung reißt nicht ab, wenn man zu Startbildschirm zurück geht
+- 2 Name senden wieder einblenden
+- 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) --> von Arduino empfangen und anzeigen
+- 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?) --> von Arduino empfangen und anzeigen
+- 4 App zurück zu Startbildschirm, wenn Verbindung abreißt --> Performance verbessern
+- 4 Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Bugfix: Color Switch Farbe
-- Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
 */

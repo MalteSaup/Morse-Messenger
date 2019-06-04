@@ -127,9 +127,9 @@ class BluetoothService (private val handler: Handler) {
                     break
                 }
                 stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
-                Log.i("LEERZEICHEN01", "Input" + stringBuilder.toString())
+                Log.i("LEERZEICHEN01", "Input " + stringBuilder.toString())
                 if(inChat){
-                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1  /*&& stringBuilder.endsWith("/r")*/){
+                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1  && stringBuilder.endsWith("/r")){
                        textArray.add(stringBuilder.toString())
                        Log.i("LEERZEICHEN", stringBuilder.toString())
                        textArray[textArray.size-1].replace("/n", "")
