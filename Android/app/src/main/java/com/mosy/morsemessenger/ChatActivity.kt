@@ -1,6 +1,10 @@
 package com.mosy.morsemessenger
 
+import android.app.Activity
 import android.app.ActivityManager
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothAdapter.*
+import android.bluetooth.BluetoothDevice.ACTION_BOND_STATE_CHANGED
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED
 import android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED
@@ -28,8 +32,6 @@ class ChatActivity : OptionsMenuActivity() {
     private var bluetoothService: BluetoothService? = null
     lateinit var mRunnable: Runnable
     lateinit var mHandler: Handler
-
-
 
     fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -132,6 +134,10 @@ class ChatActivity : OptionsMenuActivity() {
                 }
                 bluetoothService?.textArray = ArrayList()
             }
+            if(bluetoothService != null){
+                if(!bluetoothService?.enabled!!) bluetoothOff()
+            }
+
             mHandler.postDelayed(this.mRunnable, 100)
         }
         mRunnable.run()
@@ -140,6 +146,7 @@ class ChatActivity : OptionsMenuActivity() {
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED)
         this.registerReceiver(mReceiver, filter)
+
     }
 
     fun deleteSpaceAtEnd(textMessage: String) : String {
@@ -161,17 +168,29 @@ class ChatActivity : OptionsMenuActivity() {
                     chatBox.smoothScrollToPosition(messageList.size)
                 }, 100)
             }
-        };
+        }
     }
 
     val mReceiver = object : BroadcastReceiver(){ //Feuert Nachricht bei Verlust BT Verbindung, allerdings braucht es ziemlich lange. (>15 Sekunden)
         override fun onReceive(p0: Context?, p1: Intent?) {
             var action = p1?.action
             var device = p1?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-            if(ACTION_ACL_DISCONNECTED.equals(action) || ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) finish()
+            if(ACTION_ACL_DISCONNECTED.equals(action) || ACTION_ACL_DISCONNECT_REQUESTED.equals(action)){
+                var intent = Intent()
+                intent.putExtra("connectionLostState", 1)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
+            }
             Log.d("BTSTATE", "CHECK")
         }
 
+    }
+
+    fun bluetoothOff(){
+        var intent = Intent()
+        intent.putExtra("connectionLostState", 1)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     fun receiveTextFromOtherDevice(msg : String) {

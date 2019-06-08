@@ -117,7 +117,7 @@ class BluetoothService (private val handler: Handler) {
             var stringBuilder = StringBuilder()
 
             // Keep listening to the InputStream until an exception occurs.
-            while (true) {
+           /* while (true) {
                 // Read from the InputStream.
                 numBytes = try {
                     mmInStream.read(mmBuffer)
@@ -137,6 +137,24 @@ class BluetoothService (private val handler: Handler) {
                        stringBuilder.clear()
                    }
                    else Log.i("Test 35", stringBuilder.toString())
+                }
+            }*/
+            while (true) {
+                // Read from the InputStream.
+                numBytes = try {
+                    mmInStream.read(mmBuffer)
+                } catch (e: IOException) {
+                    Log.d(TAG, "Input stream was disconnected", e)
+                    break
+                }
+                stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
+                if (inChat) {
+                    if (stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith("\r")) {
+                        textArray.add(stringBuilder.toString())
+                        textArray[textArray.size - 1].replace("\n", "")
+                        stringBuilder.clear()
+
+                    } else Log.d("BTSTRING", "STRINGBUILDER")
                 }
             }
         }

@@ -10,7 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import java.io.UnsupportedEncodingException
 
-//Hintergrund Service welcher die Bluetooth Verbindung zwischen den Activits überreicht
+//Background Service which is used to hand over the BluetoothService from the MainActivity to the ChatActivity
 class BluetoothConnectionService : Service() {
 
     var bluetoothService: BluetoothService? = null

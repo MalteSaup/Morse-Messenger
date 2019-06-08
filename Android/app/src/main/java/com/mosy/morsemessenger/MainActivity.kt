@@ -1,5 +1,6 @@
 package com.mosy.morsemessenger
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -16,33 +17,41 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bluetooth_list_item.*
 import java.io.UnsupportedEncodingException
 import android.content.Intent
+import android.support.v4.app.ActivityCompat
 import android.view.*
+import java.util.jar.Manifest
 
 class MainActivity : OptionsMenuActivity() {
 
     private lateinit var devicesAdapter: DevicesAdapter
-    private lateinit var devicesList : ArrayList<BluetoothDevice>
+    private lateinit var devicesList: ArrayList<BluetoothDevice>
     private lateinit var btSwitch: Switch
     private var myService: BluetoothConnectionService? = null
     private var bluetoothService: BluetoothService? = null
     private var isBound = false
     private var isConnected = false
-    private lateinit var mRunnable : Runnable
-    private lateinit var mHandler : Handler
+    private lateinit var mRunnable: Runnable
+    private lateinit var mHandler: Handler
+    private val IF_CONNECTION_IS_LOST = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         devicesRV.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         devicesList = ArrayList()
-        devicesAdapter = DevicesAdapter(devicesList, {device : BluetoothDevice -> onDeviceClicked(device)})
+        devicesAdapter = DevicesAdapter(devicesList, { device: BluetoothDevice -> onDeviceClicked(device) })
         devicesRV.adapter = devicesAdapter
 
         bluetoothService = BluetoothService(handler)
-        if(!isServiceRunning(BluetoothConnectionService::class.java)){
+
+        //starts the "BluetoothConnectionService" who is needed to hand over the BluetoothServie to the ChatActivity
+        if (!isServiceRunning(BluetoothConnectionService::class.java)) {
             startService(Intent(applicationContext, BluetoothConnectionService::class.java))
-            bindService(Intent(applicationContext, BluetoothConnectionService::class.java), myConnection, Context.BIND_AUTO_CREATE)
+            bindService(
+                Intent(applicationContext, BluetoothConnectionService::class.java),
+                myConnection,
+                Context.BIND_AUTO_CREATE
+            )
         }
 
         implementSwitchOnClickListener()
@@ -50,13 +59,13 @@ class MainActivity : OptionsMenuActivity() {
         initializeSeekBar()
         disconnectBtn.isClickable = false
 
-        mHandler = Handler()  //to check with mRunnable, if bluetooth is enabled; switches Switch on/off
-        mRunnable = Runnable{
-            if(checkForBluetooth() && !btSwitch.isChecked){
+        //checks with the mRunnable, if bluetooth is enabled and switches the Switch on/off
+        mHandler = Handler()
+        mRunnable = Runnable {
+            if (checkForBluetooth() && !btSwitch.isChecked) {
                 onOffTV.text = getString(R.string.switchStatusOn)
                 btSwitch.isChecked = true
-            }
-            else if(!checkForBluetooth() && btSwitch.isChecked){
+            } else if (!checkForBluetooth() && btSwitch.isChecked) {
                 onOffTV.text = getString(R.string.switchStatusOff)
                 btSwitch.isChecked = false
             }
@@ -65,11 +74,15 @@ class MainActivity : OptionsMenuActivity() {
         mRunnable.run()
     }
 
-    override fun onResume() {
-        super.onResume()
-        try{disconnectDevice(findViewById(R.id.disconnectBtn))}
-        catch (e: Exception){}
-
+    //is called when the app returns from the ChatActivity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {  //check if Bluetooth Connection was lost or not in ChatActivity
+        if (requestCode == IF_CONNECTION_IS_LOST) {
+            if (resultCode == Activity.RESULT_OK) {
+                if(data?.getIntExtra("connectionLostState", 0) == 1){
+                    bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
+                }
+            }
+        }
     }
 
     val handler = object: Handler() {
@@ -90,6 +103,7 @@ class MainActivity : OptionsMenuActivity() {
         }
     }
 
+    //checks is Bluetooth is enabled
     fun checkForBluetooth() : Boolean{
         if(bluetoothService?.enabled!!) return true
         return false
@@ -256,7 +270,7 @@ class MainActivity : OptionsMenuActivity() {
             myService?.setBt(bluetoothService)
             intent.putExtra("username", nameET.text.toString())
             intent.putExtra("speed", sendSpeedSB.progress.toString())
-            startActivity(intent)
+            startActivityForResult(intent, IF_CONNECTION_IS_LOST) //starts ChatActivity as a result Activity to catch if Activity was finished trough connection loss or return Button
         }
         else Toast.makeText(applicationContext, "Name und/oder Geräteverbindung fehlt", Toast.LENGTH_SHORT).show()
     }
@@ -300,10 +314,9 @@ class MainActivity : OptionsMenuActivity() {
 
 /* TODO:
 Prioritäten: 1= sehr wichtig
-- 1 ankommende Nachricht nicht doppelt bzw. ohne inkl. letzter Nachricht senden --> /r Problem
+- 1 ankommende Nachricht nicht doppelt bzw. ohne inkl. letzter Nachricht senden --> /r Problem  : Zumindest Bei mir funktioniert es momentan mit \r  (\ NICHT / WICHTIG)
 - 1 Chat-Button geht nicht immer Bugfix --> Bug immer nur beim ersten Start der App
 - 2 Symbol richtig angezeigt bei Verbindung --> getestet, funktioniert nicht bzw. nur bei der ersten Verbindung --> intensiver TESTEN
-- 2 Verbindung reißt nicht ab, wenn man zu Startbildschirm zurück geht
 - 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) --> von Arduino empfangen und anzeigen
 - 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?) --> von Arduino empfangen und anzeigen
 - 4 App zurück zu Startbildschirm, wenn Verbindung abreißt --> Performance verbessern
