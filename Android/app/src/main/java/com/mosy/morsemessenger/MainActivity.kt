@@ -53,7 +53,7 @@ class MainActivity : OptionsMenuActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(Intent(applicationContext, BluetoothConnectionService::class.java))
             } else {
-                startService(Intent(applicationContext, BluetoothConnectionService::class.java))
+                val myService: ComponentName = startService(Intent(applicationContext, BluetoothConnectionService::class.java))
             }
             bindService(
                 Intent(applicationContext, BluetoothConnectionService::class.java),
@@ -323,12 +323,37 @@ class MainActivity : OptionsMenuActivity() {
 /* TODO:
 Prioritäten: 1= sehr wichtig
 - 1 ankommende Nachricht nicht doppelt bzw. ohne inkl. letzter Nachricht senden --> /r Problem  : Zumindest Bei mir funktioniert es momentan mit \r  (\ NICHT / WICHTIG)
-- 1 Chat-Button geht nicht immer Bugfix --> Bug immer nur beim ersten Start der App
-- 2 Symbol richtig angezeigt bei Verbindung --> getestet, funktioniert nicht bzw. nur bei der ersten Verbindung --> intensiver TESTEN
-- 3 SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) --> von Arduino empfangen und anzeigen
-- 3 ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?) --> von Arduino empfangen und anzeigen
-- 4 App zurück zu Startbildschirm, wenn Verbindung abreißt --> Performance verbessern
-- 4 Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
+- 2 Bugfix: Beim Wechsel zwischen Main- und ChatActivity:
+E/ActivityThread: Activity com.mosy.morsemessenger.ChatActivity has leaked ServiceConnection com.mosy.morsemessenger.ChatActivity$myConnection$1@d9aa6b2 that was originally bound here
+    android.app.ServiceConnectionLeaked: Activity com.mosy.morsemessenger.ChatActivity has leaked ServiceConnection com.mosy.morsemessenger.ChatActivity$myConnection$1@d9aa6b2 that was originally bound here
+        at android.app.LoadedApk$ServiceDispatcher.<init>(LoadedApk.java:1815)
+        at android.app.LoadedApk.getServiceDispatcher(LoadedApk.java:1707)
+        at android.app.ContextImpl.bindServiceCommon(ContextImpl.java:1924)
+        at android.app.ContextImpl.bindService(ContextImpl.java:1877)
+        at android.content.ContextWrapper.bindService(ContextWrapper.java:698)
+        at com.mosy.morsemessenger.ChatActivity.onCreate(ChatActivity.kt:86)
+        at android.app.Activity.performCreate(Activity.java:7436)
+        at android.app.Activity.performCreate(Activity.java:7426)
+        at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1286)
+        at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:3279)
+        at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:3484)
+        at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:86)
+        at android.app.servertransaction.TransactionExecutor.executeCallbacks(TransactionExecutor.java:108)
+        at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:68)
+        at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2123)
+        at android.os.Handler.dispatchMessage(Handler.java:109)
+        at android.os.Looper.loop(Looper.java:207)
+        at android.app.ActivityThread.main(ActivityThread.java:7470)
+        at java.lang.reflect.Method.invoke(Native Method)
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:524)
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:958)
+
+- 2 Symbol richtig angezeigt bei Verbindung --> getestet. Funktioniert nicht, wenn Verbindung besteht und dann "Suche Geräte" geklickt wird. --> Bsp: morse landet auf Platz 3 und Icon immer auf 0
+besser wäre eine Methode im devicesAdapter, die immer Aufgerufen wird, wenn das Icon sich ändert. --> Branch "SwitchIcon" angelegt zum Testen. Funktioniert noch nicht ganz.
+
+- 3 Chat-Button geht nicht immer Bugfix --> Bug immer nur beim ersten Start der App
+- 3 App zurück zu Startbildschirm, wenn Verbindung abreißt --> Performance verbessern
+- 3 Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Bugfix: Color Switch Farbe
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
 */
