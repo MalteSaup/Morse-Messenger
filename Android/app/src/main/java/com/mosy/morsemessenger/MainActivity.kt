@@ -20,6 +20,10 @@ import android.content.Intent
 import android.support.v4.app.ActivityCompat
 import android.view.*
 import java.util.jar.Manifest
+import android.support.v4.content.ContextCompat.startForegroundService
+import android.os.Build
+
+
 
 class MainActivity : OptionsMenuActivity() {
 
@@ -46,7 +50,11 @@ class MainActivity : OptionsMenuActivity() {
 
         //starts the "BluetoothConnectionService" who is needed to hand over the BluetoothServie to the ChatActivity
         if (!isServiceRunning(BluetoothConnectionService::class.java)) {
-            startService(Intent(applicationContext, BluetoothConnectionService::class.java))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(Intent(applicationContext, BluetoothConnectionService::class.java))
+            } else {
+                startService(Intent(applicationContext, BluetoothConnectionService::class.java))
+            }
             bindService(
                 Intent(applicationContext, BluetoothConnectionService::class.java),
                 myConnection,
