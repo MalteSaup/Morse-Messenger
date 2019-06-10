@@ -204,16 +204,15 @@ class ChatActivity : OptionsMenuActivity() {
                     nameDisplay.text = nameString
                     return
                 }
-                if (msg.contentEquals("SENT")){
-                    //SENT: (Nachricht wurde fertig gesendet. Grafisch darstellen durch Haken?) --> von Arduino empfangen und anzeigen
-                    //get last message_list_item with message id=1
-                    //make check_black_24dp icon visible
+                if (msg.contentEquals("SENT:")){
+                    //SENT: Message was sent successfully. White Arrow
+                    messageAdapter.showSENTArrow()
                     return
                 }
-                if (msg.contentEquals("ACK")){
-                    //ACK: , (Nachricht wurde empfangen. Grafisch darstellen durch zweiten Haken?) --> von Arduino empfangen und anzeigen
-                    //get last message_list_item with message id=1
-                    //color check_black_24dp icon green
+                if (msg.contentEquals("ACK:")){
+                    //ACK: Message was received successfully. Green Arrow
+                    messageAdapter.showRECEIVEDArrow()
+                    return
                 }
                 messageList.add(Message(0, msg))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
