@@ -53,7 +53,7 @@ class MainActivity : OptionsMenuActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 startForegroundService(Intent(applicationContext, BluetoothConnectionService::class.java))
             } else {
-                val myService: ComponentName = startService(Intent(applicationContext, BluetoothConnectionService::class.java))
+                startService(Intent(applicationContext, BluetoothConnectionService::class.java))
             }
             bindService(
                 Intent(applicationContext, BluetoothConnectionService::class.java),
