@@ -13,7 +13,7 @@
             android:layout_height="40dp" android:id="@+id/nameDisplay"
             android:paddingTop="8dp"
             android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
+            android:paddingLeft="16dp"
             android:background="@color/colorAccent"
             android:textColor="@color/colorTextW"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"

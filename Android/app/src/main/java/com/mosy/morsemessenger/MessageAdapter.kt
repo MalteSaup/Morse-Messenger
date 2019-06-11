@@ -1,10 +1,9 @@
 package com.mosy.morsemessenger
 
-import android.app.Activity
-import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
@@ -21,7 +20,7 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message : Message = messageList[position]
-        val params = holder.messageLinearLayout?.layoutParams as RelativeLayout.LayoutParams
+        val paramsLinear = holder.messageLinearLayout?.layoutParams as RelativeLayout.LayoutParams
         holder.textTV?.text = message.text
         holder.textTV?.setPadding(32,24,32,24)
 
@@ -29,15 +28,18 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
         if (message.id == 0) {
             holder.textTV?.setBackgroundResource( R.drawable.messageleft)
             holder.textTV?.setTextColor(ContextCompat.getColor(holder.textTV.context , R.color.colorTextW))
-            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT)
-            params.addRule(RelativeLayout.ALIGN_START)
+            paramsLinear.addRule(RelativeLayout.ALIGN_PARENT_LEFT)
+            paramsLinear.addRule(RelativeLayout.ALIGN_START)
+            holder.messageRelativeLayout?.gravity = Gravity.START
         } else {
             holder.textTV?.setBackgroundResource( R.drawable.messageright)
             holder.textTV?.setTextColor(ContextCompat.getColor(holder.textTV.context , R.color.colorTextB))
-            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
-            params.addRule(RelativeLayout.ALIGN_END)
+            paramsLinear.addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
+            paramsLinear.addRule(RelativeLayout.ALIGN_END)
+            holder.messageRelativeLayout?.gravity = Gravity.END
         }
-        holder.messageLinearLayout.layoutParams = params //causes layout update
+        holder.messageLinearLayout.layoutParams = paramsLinear //causes layout update
+
 
         if(itemVisible && !itemReceived) {
             holder.checkArrow?.visibility = VISIBLE
@@ -86,6 +88,7 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
     class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textTV = itemView.findViewById(R.id.textTV) as? TextView
         val messageLinearLayout = itemView.findViewById(R.id.messageLinearLayout) as? LinearLayout
+        val messageRelativeLayout = itemView.findViewById(R.id.messageRelativeLayout) as? RelativeLayout
         var checkArrow = itemView.findViewById(R.id.checkArrow) as? ImageView
     }
 }
