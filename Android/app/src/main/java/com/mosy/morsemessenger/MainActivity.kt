@@ -17,11 +17,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.bluetooth_list_item.*
 import java.io.UnsupportedEncodingException
 import android.content.Intent
-import android.support.v4.app.ActivityCompat
 import android.view.*
-import java.util.jar.Manifest
-import android.support.v4.content.ContextCompat.startForegroundService
-import android.os.Build
+
 
 
 
@@ -32,6 +29,7 @@ class MainActivity : OptionsMenuActivity() {
     private lateinit var btSwitch: Switch
     private var myService: BluetoothConnectionService? = null
     private var bluetoothService: BluetoothService? = null
+    private lateinit var bluetoothDevice: BluetoothDevice
     private var isBound = false
     private var isConnected = false
     private lateinit var mRunnable: Runnable
@@ -48,13 +46,11 @@ class MainActivity : OptionsMenuActivity() {
 
         bluetoothService = BluetoothService(handler)
 
-        //starts the "BluetoothConnectionService" who is needed to hand over the BluetoothServie to the ChatActivity
+        //starts the "BluetoothConnectionService" which is needed to hand over the BluetoothServie to the ChatActivity
         if (!isServiceRunning(BluetoothConnectionService::class.java)) {
             val intent = Intent(applicationContext, BluetoothConnectionService::class.java)
-            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(intent)
-            } else {*/
-                startService(intent)
+
+            startService(intent)
 
             bindService(
                 intent,
@@ -92,7 +88,8 @@ class MainActivity : OptionsMenuActivity() {
         if (requestCode == IF_CONNECTION_IS_LOST) {
             if (resultCode == Activity.RESULT_OK) {
                 if(data?.getIntExtra("connectionLostState", 0) == 1){
-                    bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
+                    isConnected=false
+                    devicesAdapter.changeIcon(bluetoothDevice, isConnected)
                 }
             }
         }
@@ -110,7 +107,6 @@ class MainActivity : OptionsMenuActivity() {
     //Read message from other device
     fun messageRead(msg: Message){
         try {
-            //textViewMessage.text = msg.obj as String
         } catch (e: UnsupportedEncodingException) {
             e.printStackTrace()
         }
@@ -127,7 +123,7 @@ class MainActivity : OptionsMenuActivity() {
         if (msg.arg1 == 1) {
             disconnectBtn.isClickable = true
             isConnected = true
-            bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
+            devicesAdapter.changeIcon(bluetoothDevice, isConnected)
             Toast.makeText(applicationContext, "Verbindung aufgebaut: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
         }
         else {
@@ -203,7 +199,7 @@ class MainActivity : OptionsMenuActivity() {
             Toast.makeText(applicationContext, "Bluetooth ist aus", Toast.LENGTH_SHORT).show()
     }
 
-    //Find Bluetooth-Devices and show them in List
+    //Find Bluetooth-Devices and show them in List (ClickListener)
     fun discoverPairedDevices(view: View){
         if (bluetoothService?.enabled!!) {
             bluetoothService?.discover()
@@ -222,8 +218,13 @@ class MainActivity : OptionsMenuActivity() {
             if (BluetoothDevice.ACTION_FOUND == action) {
                 val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
 
-                if(!devicesList.contains(device)){
-                    // add the name to the list if it is not already in the list
+                // add the name to the list if it is not already in the list
+                if(!devicesList.contains(device)) {
+                    //if (device is connected) { // TODO: check, if device isConnected at the Moment
+                    //devicesAdapter.changeIcon(device, isConnected)
+                    // } else {
+                    devicesAdapter.changeIcon(device, false)
+                    //}
                     devicesList.add(device)
                     devicesAdapter.notifyItemInserted(devicesList.size -1)
                 }
@@ -241,8 +242,7 @@ class MainActivity : OptionsMenuActivity() {
                 Toast.makeText(applicationContext, "Verbindung getrennt", Toast.LENGTH_SHORT).show()
                 isConnected = false
                 //Change Icon in RecyclerView-Element
-                bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
-                devicesAdapter.notifyDataSetChanged()
+                devicesAdapter.changeIcon(device, isConnected)
             }
         }
         disconnectBtn.isClickable = false
@@ -250,25 +250,23 @@ class MainActivity : OptionsMenuActivity() {
 
     //Click-Listener for Device in Devices-RecyclerView. To create connection with Bluetooth-Device.
     private fun onDeviceClicked (device : BluetoothDevice) {
+        bluetoothDevice = device
+
         // Get the device MAC address
         val macAddress = device.address
         Toast.makeText(applicationContext, "Connecting: ${device.name}", Toast.LENGTH_SHORT).show()
         bluetoothService?.connect(macAddress)
+
         //Change Icon in RecyclerView-Element
         if(device.bondState == BOND_BONDED ) {
-            /*TODO: Problem lösen (Auch in DevicesAdapter): Being bonded (paired) with a remote device does not necessarily mean the device is currently connected.
-            It just means that the pending procedure was completed at some earlier time, and the link key is still stored locally, ready to use on the next connection*/
-            Log.i ("keks" ,device.bondState.toString())
-
             //places clicked device on first position in list
             for(i in 0 until devicesList.size){
                 if(devicesList[i] == device){
-                    var k = devicesList[i]
+                    var mDevice = devicesList[i]
                     devicesList[i] = devicesList[0]
-                    devicesList[0] = k
+                    devicesList[0] = mDevice
                 }
                 devicesRV.smoothScrollToPosition(0);
-                //bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
                 devicesAdapter.notifyDataSetChanged()
             }
         }
