@@ -77,7 +77,9 @@ class ChatActivity : OptionsMenuActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(mReceiver)
+        unbindService(myConnection)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)

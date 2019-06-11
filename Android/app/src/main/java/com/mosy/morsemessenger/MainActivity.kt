@@ -83,6 +83,10 @@ class MainActivity : OptionsMenuActivity() {
         mRunnable.run()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
     //is called when the app returns from the ChatActivity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {  //check if Bluetooth Connection was lost or not in ChatActivity
         if (requestCode == IF_CONNECTION_IS_LOST) {
