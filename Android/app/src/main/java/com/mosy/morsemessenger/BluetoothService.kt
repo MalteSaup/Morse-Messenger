@@ -117,44 +117,28 @@ class BluetoothService (private val handler: Handler) {
             var stringBuilder = StringBuilder()
 
             // Keep listening to the InputStream until an exception occurs.
-           /* while (true) {
+          while (true) {
                 // Read from the InputStream.
                 numBytes = try {
                     mmInStream.read(mmBuffer)
-                    Log.i("LEERZEICHEN0", "Input" + mmBuffer.toString())
                 } catch (e: IOException) {
                     Log.d(TAG, "Input stream was disconnected", e)
                     break
                 }
                 stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
-                Log.i("Test", "Input " + stringBuilder.toString())
+                //StringBuilder enthält nur Leerzeichen (und Enter?), wenn keine Nachricht gesendet wird.
                 if(inChat){
-                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 /*&& stringBuilder.endsWith("/r")*/){
-                       textArray.add(stringBuilder.toString())
-                       Log.i("Test 1", stringBuilder.toString())
-                       textArray[textArray.size-1].replace("/n", "")
-                       Log.i("Test 2", textArray[textArray.size-1])
-                       stringBuilder.clear()
+                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith("\r")){
+                           textArray.add(stringBuilder.toString())
+                           Log.i("Test 1", "mh" + stringBuilder.toString() + "mh")
+                           //textArray[textArray.size-1].replace("\n", "") //schmeißt nullpointer... SINN?
+                           Log.i("Test 2", "mh" + textArray.size.toString() + "mh")
+                           stringBuilder.clear()
                    }
-                   else Log.i("Test 35", stringBuilder.toString())
-                }
-            }*/
-            while (true) {
-                // Read from the InputStream.
-                numBytes = try {
-                    mmInStream.read(mmBuffer)
-                } catch (e: IOException) {
-                    Log.d(TAG, "Input stream was disconnected", e)
-                    break
-                }
-                stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
-                if (inChat) {
-                    if (stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith("\r")) {
-                        textArray.add(stringBuilder.toString())
-                        textArray[textArray.size - 1].replace("\n", "")
-                        stringBuilder.clear()
+                   else {
+                       Log.i("Test 35", "mh" + stringBuilder.toString() + "mh")
+                   }
 
-                    } else Log.d("BTSTRING", "STRINGBUILDER")
                 }
             }
         }

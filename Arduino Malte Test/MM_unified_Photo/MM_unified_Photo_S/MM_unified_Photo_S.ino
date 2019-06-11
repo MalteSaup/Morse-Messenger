@@ -109,8 +109,10 @@ void loop() {
 //---------------------------------------------------
   
   if (input != NULL) wordSend();                // Falls wir irgendwas empfangen haben, schicke es mit wordSend()
-  String s = Serial.readStringUntil("\n");
-  BTSerial.println(s  + "\r");
+  if(input != NULL)  {
+      BTSerial.print(input +"\r"); //Test: sendet selben Text zurück, der im Chat an Arduino gesendet wurde
+  }
+
 }
 
 

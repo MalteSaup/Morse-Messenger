@@ -129,8 +129,9 @@ class ChatActivity : OptionsMenuActivity() {
         mHandler = Handler()
         mRunnable = Runnable{
             if(checkForNewMessage()) {
-                for (i in bluetoothService?.textArray!!) {
-                    receiveTextFromOtherDevice(i.trim())
+                for (text in bluetoothService?.textArray!!) {
+                    Log.i("Test",text + " Runnable text")
+                    receiveTextFromOtherDevice(text.trim())
                 }
                 bluetoothService?.textArray = ArrayList()
             }

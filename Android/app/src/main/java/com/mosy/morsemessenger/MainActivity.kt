@@ -50,13 +50,14 @@ class MainActivity : OptionsMenuActivity() {
 
         //starts the "BluetoothConnectionService" who is needed to hand over the BluetoothServie to the ChatActivity
         if (!isServiceRunning(BluetoothConnectionService::class.java)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                startForegroundService(Intent(applicationContext, BluetoothConnectionService::class.java))
-            } else {
-                startService(Intent(applicationContext, BluetoothConnectionService::class.java))
-            }
+            val intent = Intent(applicationContext, BluetoothConnectionService::class.java)
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(intent)
+            } else {*/
+                startService(intent)
+
             bindService(
-                Intent(applicationContext, BluetoothConnectionService::class.java),
+                intent,
                 myConnection,
                 Context.BIND_AUTO_CREATE
             )
