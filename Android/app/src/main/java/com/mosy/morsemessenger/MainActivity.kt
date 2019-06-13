@@ -204,7 +204,14 @@ class MainActivity : OptionsMenuActivity() {
         if (bluetoothService?.enabled!!) {
             bluetoothService?.discover()
             Toast.makeText(baseContext, "Suche Geräte", Toast.LENGTH_SHORT).show()
+            var device : BluetoothDevice?
+            if(isConnected) device = devicesList.get(0)
+            else device = null
             devicesList.clear()
+            if(device != null) {
+                devicesList.add(0, device)
+                devicesAdapter.changeIcon(bluetoothDevice, isConnected)
+            }
             devicesAdapter.notifyDataSetChanged()
             registerReceiver(blReceiver, IntentFilter(BluetoothDevice.ACTION_FOUND))
         } else
@@ -325,7 +332,6 @@ class MainActivity : OptionsMenuActivity() {
 
 /* TODO:
 Prioritäten: 1= sehr wichtig
-- 1 SUCHE GERÄTE: wenn Verbindung besteht und Suche Geräte geklickt wird, werden nur Geräte angezeigt, die nicht verbunden sind. Das verbundene Gerät soll auch angezeigt werden.
 - 3 App zurück zu Startbildschirm, wenn Verbindung abreißt --> Performance verbessern
 - 3 Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
 - Bugfix: Color Switch Farbe
