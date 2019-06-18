@@ -24,7 +24,7 @@
         \n\nVerbinde dich mit einem Arduino (Morse oder Morse2), gebe deinen Namen ein und stelle eine Übertragungsgeschwindigkeit für die Morse-Mitteilungen ein (10=schnell, 500=langsam).
         \n\nBesonderheiten im Vergleich zu einem normalen Chat:
         \n► Das Morsealphabet hat nur Kleinbuchstaben
-        \n► Manche Sonderzeichen gibt es nicht - z.B. ö,ä,ü,ß.
+        \n► Manche Sonderzeichen gibt es nicht - z.B. ö, ä, ü, ß.
         \n► Erlaubte Zeichen: a-z 0-9 . , ? \n
 </string>
 

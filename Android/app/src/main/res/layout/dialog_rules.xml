@@ -5,31 +5,38 @@
               android:orientation="vertical"
 android:background="@color/colorPrimary">
 
-    <TextView
-            android:text="@string/rules"
+    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textAlignment="center"
-            android:textSize="24dp"
-            android:id="@+id/dialogHeadline" android:textColor="@color/colorTextW"/>
-    <TextView
-            android:text="@string/rulesText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:id="@+id/dialogTV" android:textColor="@color/colorTextW"/>
-    <Button
-            android:text="@android:string/ok"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/dialog_OKbtn"
-            android:layout_margin="10dp"
-            android:background="@drawable/buttonshape"
-            android:textColor="@color/colorTextW"
-            android:textSize="18sp"/>
+            android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <TextView
+                    android:text="@string/rules"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:textAlignment="center"
+                    android:textSize="24dp"
+                    android:id="@+id/dialogHeadline" android:textColor="@color/colorTextW"/>
+            <TextView
+                    android:text="@string/rulesText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:id="@+id/dialogTV" android:textColor="@color/colorTextW"/>
+            <Button
+                    android:text="@android:string/ok"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/dialog_OKbtn"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/buttonshape"
+                    android:textColor="@color/colorTextW"
+                    android:textSize="18sp"/>
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
