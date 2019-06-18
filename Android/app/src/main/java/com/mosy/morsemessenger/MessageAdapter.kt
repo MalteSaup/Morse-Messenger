@@ -6,7 +6,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -40,13 +40,15 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
         }
         holder.messageLinearLayout.layoutParams = paramsLinear //causes layout update
 
-
+        //send + received Arrows
         if(itemVisible && !itemReceived) {
             holder.checkArrow?.visibility = VISIBLE
         }
         if(itemVisible && itemReceived){
             holder.checkArrow?.visibility = VISIBLE
             holder.checkArrow?.setImageResource(R.drawable.ic_check_green_24dp)
+        } else {
+            holder.checkArrow?.visibility = INVISIBLE
         }
         itemVisible = false
         itemReceived = false
