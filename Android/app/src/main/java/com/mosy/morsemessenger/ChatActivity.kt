@@ -70,6 +70,7 @@ class ChatActivity : OptionsMenuActivity() {
         //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
         //send username to chat-partner + speed to arduino
         bluetoothService?.write("USR:" + username )
+        Thread.sleep(500);
         bluetoothService?.write("CLK:" + speed )
         bluetoothService?.inChat = true
     }
@@ -203,16 +204,16 @@ class ChatActivity : OptionsMenuActivity() {
                 //checks if message is username of chat-partner
                 if (msg.contains("USR:", ignoreCase = true)) {
                     //sets username of chat-partner
-                    var nameString: String = msg.removePrefix("usr:")
+                    var nameString: String = msg.removePrefix("USR:")
                     nameDisplay.text = nameString
                     return
                 }
-                if (msg.contentEquals("sent:")){
+                if (msg.contentEquals("SENT:")){
                     //SENT: Message was sent successfully. White Arrow
                     messageAdapter.showSENTArrow()
                     return
                 }
-                if (msg.contentEquals("ack:")){
+                if (msg.contentEquals("ACK:")){
                     //ACK: Message was received successfully. Green Arrow
                     messageAdapter.showRECEIVEDArrow()
                     return

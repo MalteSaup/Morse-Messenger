@@ -128,7 +128,7 @@ class BluetoothService (private val handler: Handler) {
                 stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
                 //StringBuilder enthält nur Leerzeichen (und Enter?), wenn keine Nachricht gesendet wird.
                 if(inChat){
-                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith("\r")){
+                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith("\n")){
                            textArray.add(stringBuilder.toString())
                            Log.i("Test 1", "mh" + stringBuilder.toString() + "mh")
                            //textArray[textArray.size-1].replace("\n", "") //schmeißt nullpointer... SINN?
@@ -164,7 +164,7 @@ class BluetoothService (private val handler: Handler) {
 
     fun write(input: String) {
         val inputNoSpecialChars : String = checkSpecialCharacters(input)
-        val sendString = inputNoSpecialChars.toUpperCase() + "/n"
+        val sendString = inputNoSpecialChars.toUpperCase() + "\n"
         val bytes = sendString.toByteArray()           //converts entered String into bytes
         try {
             connectedThread?.write(bytes)

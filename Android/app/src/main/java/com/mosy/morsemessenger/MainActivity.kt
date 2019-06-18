@@ -332,8 +332,10 @@ class MainActivity : OptionsMenuActivity() {
 
 /* TODO:
 Prioritäten: 1= sehr wichtig
+- 1 weißer Haken: A schickt, Haken OK, B schickt Text: Haken weiß auch da... nur wenn abwechselnd geschickt wird. Wenn A 4x hintereinande schickt, kein Haken
+- 2 Scrollen in Dialog
+- 2 Mechanismus: Erst Name schicken, wenn beide Verbunden sind
 - 3 App zurück zu Startbildschirm, wenn Verbindung abreißt --> Performance verbessern
 - 3 Nachrichten in Datenbank speichern während Verbindung existiert - bei Verbindungsabbruch Datenbank leeren
-- Bugfix: Color Switch Farbe
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
 */
