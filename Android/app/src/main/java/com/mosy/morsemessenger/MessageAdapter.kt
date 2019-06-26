@@ -43,8 +43,9 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
         //send + received Arrows
         if(itemVisible && !itemReceived) {
             holder.checkArrow?.visibility = VISIBLE
+            holder.checkArrow?.setImageResource(R.drawable.ic_check_white_24dp)
         }
-        if(itemVisible && itemReceived){
+        else if (itemVisible && itemReceived){
             holder.checkArrow?.visibility = VISIBLE
             holder.checkArrow?.setImageResource(R.drawable.ic_check_green_24dp)
         } else {
@@ -65,8 +66,19 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
 
     //get Index of last Message with Id 1 in RecyclerView
     private fun getIndex(): Int {
-        var ownMessageList = (messageList.filter { message -> message.id == 1})
-        var index = (messageList).indexOf(ownMessageList.last())
+
+        var ownMessageList : ArrayList<Message> = ArrayList()
+
+            for (message in messageList) {
+                if(message.id == 1) {
+                    ownMessageList.add(message)
+            }
+        }
+        var index = 0
+            //(messageList.filter { message -> message.id == 1})
+        if (ownMessageList.isNotEmpty()) {
+            index = (messageList).indexOf(ownMessageList.last())
+        }
         Log.i("MessageList", (messageList).indexOf(ownMessageList.last()).toString())
         return index
     }

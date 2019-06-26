@@ -208,14 +208,19 @@ class ChatActivity : OptionsMenuActivity() {
                     nameDisplay.text = nameString
                     return
                 }
-                if (msg.contentEquals("SENT:")){
+                if (msg.contentEquals("SENT:") ){
                     //SENT: Message was sent successfully. White Arrow
-                    messageAdapter.showSENTArrow()
+                    if(messageList.isNotEmpty()) {
+                        messageAdapter.showSENTArrow()
+                    }
+
                     return
                 }
                 if (msg.contentEquals("ACK:")){
                     //ACK: Message was received successfully. Green Arrow
-                    messageAdapter.showRECEIVEDArrow()
+                    if(messageList.isNotEmpty()) {
+                        messageAdapter.showRECEIVEDArrow()
+                    }
                     return
                 }
                 messageList.add(Message(0, msg))
