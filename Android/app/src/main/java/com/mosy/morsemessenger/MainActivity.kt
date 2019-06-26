@@ -295,7 +295,7 @@ class MainActivity : OptionsMenuActivity() {
 
     fun initializeSeekBar() {
 
-        sendSpeedSB.max = 500
+        sendSpeedSB.max = 200
         sendSpeedTV.text = sendSpeedSB.progress.toString() + " ms"
 
         sendSpeedSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
