@@ -5,13 +5,10 @@ import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.os.Handler
 import android.util.Log
-import android.widget.Toast
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
-
-// https://github.com/bauerjj/Android-Simple-Bluetooth-Example/tree/master/app
 
 const val REQUEST_ENABLE_BT = 1
 const val TAG = "Bluetooth"
@@ -20,28 +17,25 @@ const val MESSAGE_CONNECTION: Int = 1
 const val MESSAGE_STATUS: Int = 2
 
 class BluetoothService (private val handler: Handler) {
-    // https://stackoverflow.com/questions/18657427/ioexception-read-failed-socket-might-closed-bluetooth-on-android-4-3
-    // Hint: If you are connecting to a Bluetooth serial board then try using the
-    // well-known SPP UUID 00001101-0000-1000-8000-00805F9B34FB.
-    // However if you are connecting to an Android peer then please generate your own unique UUID.
+
     var textArray: ArrayList<String> = ArrayList()
     var inChat = false
     var message = Message(1,"")
     val MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-    val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+    private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+    val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
+    val enabled: Boolean? get() = bluetoothAdapter?.isEnabled
+    private var connectedThread: ConnectedThread? = null
 
     init{}
-    val enabled: Boolean?
-        get() = bluetoothAdapter?.isEnabled
 
     fun disable(){
-        if (bluetoothAdapter != null) bluetoothAdapter.disable()
+        bluetoothAdapter?.disable()
     }
-
-    val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
 
     fun connect(macAddress: String) {
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
+
         if (device != null) {
             val connectThread = ConnectThread(device)
             connectThread.start()
@@ -51,10 +45,8 @@ class BluetoothService (private val handler: Handler) {
 
     fun disconnect(macAddress: String) {
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
-        if (device != null) {
-            Log.i(TAG, device.toString() + " disconnect 1")
-            connectedThread?.cancel()
-        }
+
+        if (device != null) connectedThread?.cancel()
     }
 
     fun discover(){
@@ -62,6 +54,7 @@ class BluetoothService (private val handler: Handler) {
     }
 
     private inner class ConnectThread(val device: BluetoothDevice) : Thread() {
+
         var socket: BluetoothSocket? = null
 
         override fun run(){
@@ -70,11 +63,12 @@ class BluetoothService (private val handler: Handler) {
             try {
                 socket = device.createRfcommSocketToServiceRecord(MY_UUID)
             } catch (e: IOException) {
+                e.printStackTrace()
+
                 fail = true
-                //Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_SHORT).show()
             }
 
-            // Establish the Bluetooth socket connection.
+            // Establish the bluetooth socket connection.
             try {
                 socket?.connect()
             } catch (e: IOException) {
@@ -83,11 +77,13 @@ class BluetoothService (private val handler: Handler) {
                     socket?.close()
                     handler.obtainMessage(MESSAGE_CONNECTION, -1, -1).sendToTarget()
                 } catch (e2: IOException) {
+                    e2.printStackTrace()
                 }
             }
 
-            if (fail == false) {
+            if (!fail) {
                 if (socket != null) connectedThread = ConnectedThread(socket!!)
+
                 connectedThread?.start()
                 handler.obtainMessage(MESSAGE_CONNECTION, 1, -1, device.name).sendToTarget()
             }
@@ -96,49 +92,42 @@ class BluetoothService (private val handler: Handler) {
 
         fun cancel() {
             try {
-                Log.d(TAG, "cancel: Closing Client Socket.")
                 if (socket != null) socket!!.close()
             } catch (e: IOException) {
+                e.printStackTrace()
                 Log.e(TAG, "cancel of socket in ConnectThread failed. " + e.message)
             }
-
         }
 
     }
-    private var connectedThread: ConnectedThread? = null
 
     private inner class ConnectedThread(private val mmSocket: BluetoothSocket) : Thread() {
+
         val mmInStream: InputStream = mmSocket.inputStream
         val mmOutStream: OutputStream = mmSocket.outputStream
         private val mmBuffer: ByteArray = ByteArray(1024) // mmBuffer store for the stream
 
         override fun run() {
             var numBytes: Int // bytes returned from read()
-            var stringBuilder = StringBuilder()
+            val stringBuilder = StringBuilder()
 
             // Keep listening to the InputStream until an exception occurs.
-          while (true) {
+            while (true) {
+
                 // Read from the InputStream.
                 numBytes = try {
                     mmInStream.read(mmBuffer)
                 } catch (e: IOException) {
+                    e.printStackTrace()
                     Log.d(TAG, "Input stream was disconnected", e)
                     break
                 }
-                stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
-                //StringBuilder enthält nur Leerzeichen (und Enter?), wenn keine Nachricht gesendet wird.
-                if(inChat){
-                   if(stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith("\n")){
-                           textArray.add(stringBuilder.toString())
-                           Log.i("Test 1", "mh" + stringBuilder.toString() + "mh")
-                           //textArray[textArray.size-1].replace("\n", "") //schmeißt nullpointer... SINN?
-                           Log.i("Test 2", "mh" + textArray.size.toString() + "mh")
-                           stringBuilder.clear()
-                   }
-                   else {
-                       Log.i("Test 35", "mh" + stringBuilder.toString() + "mh")
-                   }
 
+                stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
+
+                if(inChat && stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith("\n")){
+                    textArray.add(stringBuilder.toString())
+                    stringBuilder.clear()
                 }
             }
         }
@@ -165,14 +154,17 @@ class BluetoothService (private val handler: Handler) {
     fun write(input: String) {
         val inputNoSpecialChars : String = checkSpecialCharacters(input)
         val sendString = inputNoSpecialChars.toUpperCase() + "\n"
-        val bytes = sendString.toByteArray()           //converts entered String into bytes
+        val bytes = sendString.toByteArray() //converts entered String into bytes
+
         try {
             connectedThread?.write(bytes)
         } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
-    fun checkSpecialCharacters (input: String): String {
+    //converts special characters, which morse code does not implement
+    private fun checkSpecialCharacters (input: String): String {
         var input2 = input
 
         input2 = input2.replace("ü", "ue")
@@ -184,8 +176,8 @@ class BluetoothService (private val handler: Handler) {
         input2= input2.replace("Ö", "Oe")
 
         input2= input2.replace("ß", "ss")
-        return input2
 
+        return input2
     }
 }
 
