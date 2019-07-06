@@ -17,9 +17,6 @@ import java.io.UnsupportedEncodingException
 import android.content.Intent
 import android.view.*
 
-
-
-
 class MainActivity : OptionsMenuActivity() {
 
     private lateinit var devicesAdapter: DevicesAdapter

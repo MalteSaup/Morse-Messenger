@@ -12,15 +12,18 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import kotlinx.android.synthetic.main.message_list_item.view.*
 
-class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+class MessageAdapter(private val messageList : ArrayList<Message>) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
     var itemVisible: Boolean = false
     var itemReceived: Boolean = false
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         val message : Message = messageList[position]
         val paramsLinear = holder.messageLinearLayout?.layoutParams as RelativeLayout.LayoutParams
+
         holder.textTV?.text = message.text
         holder.textTV?.setPadding(32,24,32,24)
 
@@ -28,17 +31,23 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
         if (message.id == 0) {
             holder.textTV?.setBackgroundResource( R.drawable.messageleft)
             holder.textTV?.setTextColor(ContextCompat.getColor(holder.textTV.context , R.color.colorTextW))
+
             paramsLinear.addRule(RelativeLayout.ALIGN_PARENT_LEFT)
             paramsLinear.addRule(RelativeLayout.ALIGN_START)
+
             holder.messageRelativeLayout?.gravity = Gravity.START
         } else {
             holder.textTV?.setBackgroundResource( R.drawable.messageright)
             holder.textTV?.setTextColor(ContextCompat.getColor(holder.textTV.context , R.color.colorTextB))
+
             paramsLinear.addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
             paramsLinear.addRule(RelativeLayout.ALIGN_END)
+
             holder.messageRelativeLayout?.gravity = Gravity.END
         }
-        holder.messageLinearLayout.layoutParams = paramsLinear //causes layout update
+
+        //causes layout update
+        holder.messageLinearLayout.layoutParams = paramsLinear
 
         //send + received Arrows
         if(itemVisible && !itemReceived) {
@@ -48,9 +57,9 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
         else if (itemVisible && itemReceived){
             holder.checkArrow?.visibility = VISIBLE
             holder.checkArrow?.setImageResource(R.drawable.ic_check_green_24dp)
-        } else {
-            holder.checkArrow?.visibility = INVISIBLE
         }
+        else holder.checkArrow?.visibility = INVISIBLE
+
         itemVisible = false
         itemReceived = false
     }
@@ -68,14 +77,14 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
     private fun getIndex(): Int {
 
         var ownMessageList : ArrayList<Message> = ArrayList()
+        var index = 0
 
-            for (message in messageList) {
-                if(message.id == 1) {
-                    ownMessageList.add(message)
+        for (message in messageList) {
+            if(message.id == 1) {
+                ownMessageList.add(message)
             }
         }
-        var index = 0
-            //(messageList.filter { message -> message.id == 1})
+
         if (ownMessageList.isNotEmpty()) {
             index = (messageList).indexOf(ownMessageList.last())
         }
@@ -84,7 +93,8 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
     }
 
     fun showSENTArrow(){
-        var index = getIndex()
+        val index = getIndex()
+
         itemVisible = true
         itemReceived = false
         Log.i("MessageList", "SENT")
@@ -92,7 +102,8 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
     }
 
     fun showRECEIVEDArrow () {
-        var index = getIndex()
+        val index = getIndex()
+
         itemVisible = true
         itemReceived = true
         Log.i("MessageList", "ACK")
@@ -100,9 +111,9 @@ class MessageAdapter(val messageList : ArrayList<Message>) : RecyclerView.Adapte
     }
 
     class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textTV = itemView.findViewById(R.id.textTV) as? TextView
-        val messageLinearLayout = itemView.findViewById(R.id.messageLinearLayout) as? LinearLayout
-        val messageRelativeLayout = itemView.findViewById(R.id.messageRelativeLayout) as? RelativeLayout
-        var checkArrow = itemView.findViewById(R.id.checkArrow) as? ImageView
+        val textTV : TextView? = itemView.textTV
+        val messageLinearLayout : LinearLayout? = itemView.messageLinearLayout
+        val messageRelativeLayout : RelativeLayout? = itemView.messageRelativeLayout
+        var checkArrow : ImageView? = itemView.checkArrow
     }
 }
