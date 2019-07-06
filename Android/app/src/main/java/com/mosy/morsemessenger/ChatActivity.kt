@@ -2,14 +2,10 @@ package com.mosy.morsemessenger
 
 import android.app.Activity
 import android.app.ActivityManager
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothAdapter.*
-import android.bluetooth.BluetoothDevice.ACTION_BOND_STATE_CHANGED
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECTED
 import android.bluetooth.BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED
 import android.content.*
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
@@ -35,10 +31,12 @@ class ChatActivity : OptionsMenuActivity() {
 
     fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
         // Loop through the running services
         for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
+
+            // If the service is running then return true
             if (serviceClass.name == service.service.className) {
-                // If the service is running then return true
                 return true
             }
         }
@@ -51,11 +49,10 @@ class ChatActivity : OptionsMenuActivity() {
             service: IBinder
         ) {
             val binder = service as BluetoothConnectionService.MyLocalBinder
+
             myService = binder.getService()
-            if (isServiceRunning(BluetoothConnectionService::class.java)) {
-                d("TEST", "TRUE")
-            } else d("TEST", "FALSE")
             setBtService(myService?.getBt())
+
             isBound = true
         }
 
@@ -72,6 +69,7 @@ class ChatActivity : OptionsMenuActivity() {
         bluetoothService?.write("USR:" + username )
         Thread.sleep(500);
         bluetoothService?.write("CLK:" + speed )
+
         bluetoothService?.inChat = true
     }
 
@@ -98,23 +96,19 @@ class ChatActivity : OptionsMenuActivity() {
         username = intent.getStringExtra("username")
         username = deleteSpaceAtEnd(username)
         speed = intent.getStringExtra("speed")
-        Log.i("TEST", username + "d " + speed)
 
         scrollToBottomWhenKeyboardOpen()
 
         sendButton.setOnClickListener {
-            var textMessage: String = textInput.text.toString()
-            if (isBound) d("TEST", "TRUE BOUND")
-            else d("TEST", "FALSE BOUND")
+            val textMessage: String = textInput.text.toString()
 
             //if last chars are spaces: delete spaces
             text = deleteSpaceAtEnd(textMessage)
-            Log.i("TEST", text +"1")
 
-            var message = Message(1, text)
+            val message = Message(1, text)
 
             //Message aus text an Arduino senden
-            bluetoothService?.write(text );
+            bluetoothService?.write(text )
 
             //Update RecyclerView
             messageList.add(message)
@@ -133,39 +127,39 @@ class ChatActivity : OptionsMenuActivity() {
         mRunnable = Runnable{
             if(checkForNewMessage()) {
                 for (text in bluetoothService?.textArray!!) {
-                    Log.i("Test",text + " Runnable text")
                     receiveTextFromOtherDevice(text.trim())
                 }
                 bluetoothService?.textArray = ArrayList()
             }
-            if(bluetoothService != null){
-                if(!bluetoothService?.enabled!!) bluetoothOff()
-            }
+            if(bluetoothService != null && !bluetoothService?.enabled!!) bluetoothOff()
 
             mHandler.postDelayed(this.mRunnable, 100)
         }
         mRunnable.run()
 
-        var filter = IntentFilter()
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED)
+        val filter = IntentFilter()
+        filter.addAction(ACTION_ACL_DISCONNECTED)
+        filter.addAction(ACTION_ACL_DISCONNECT_REQUESTED)
         this.registerReceiver(mReceiver, filter)
 
     }
 
-    fun deleteSpaceAtEnd(textMessage: String) : String {
+    private fun deleteSpaceAtEnd(textMessage: String) : String {
+
         val charArray : CharArray = textMessage.takeLast(1).toCharArray()
         val lastChar : Char = charArray[0]
         val isSpace : Boolean = Character.isWhitespace(lastChar)
-        if (isSpace) {
+
+        return if (isSpace) {
             text = textMessage.dropLast(1)
             deleteSpaceAtEnd(text)
-            return text
+            text
+        } else {
+            textMessage
         }
-        else { return textMessage }
     }
 
-    fun scrollToBottomWhenKeyboardOpen () {
+    private fun scrollToBottomWhenKeyboardOpen () {
         chatBox.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (bottom < oldBottom) {
                 chatBox.postDelayed(Runnable {
@@ -175,54 +169,58 @@ class ChatActivity : OptionsMenuActivity() {
         }
     }
 
-    val mReceiver = object : BroadcastReceiver(){ //Feuert Nachricht bei Verlust BT Verbindung, allerdings braucht es ziemlich lange. (>15 Sekunden)
+    // Sends message if bluetooth-connection is lost
+    val mReceiver = object : BroadcastReceiver(){
         override fun onReceive(p0: Context?, p1: Intent?) {
-            var action = p1?.action
+            val action = p1?.action
             var device = p1?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
             if(ACTION_ACL_DISCONNECTED.equals(action) || ACTION_ACL_DISCONNECT_REQUESTED.equals(action)){
-                var intent = Intent()
+                val intent = Intent()
                 intent.putExtra("connectionLostState", 1)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }
-            Log.d("BTSTATE", "CHECK")
         }
 
     }
 
-    fun bluetoothOff(){
-        var intent = Intent()
+    private fun bluetoothOff(){
+        val intent = Intent()
         intent.putExtra("connectionLostState", 1)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
 
-    fun receiveTextFromOtherDevice(msg : String) {
+    private fun receiveTextFromOtherDevice(msg : String) {
         if(!msg.isBlank()){
-            d("BTSTRING", msg)
+
             if(msg.length > 1){
+
                 //checks if message is username of chat-partner
                 if (msg.contains("USR:", ignoreCase = true)) {
+
                     //sets username of chat-partner
                     var nameString: String = msg.removePrefix("USR:")
                     nameDisplay.text = nameString
                     return
                 }
                 if (msg.contentEquals("SENT:") ){
-                    //SENT: Message was sent successfully. White Arrow
+
+                    //SENT: Message was sent successfully. White arrow
                     if(messageList.isNotEmpty()) {
                         messageAdapter.showSENTArrow()
                     }
-
                     return
                 }
                 if (msg.contentEquals("ACK:")){
-                    //ACK: Message was received successfully. Green Arrow
+
+                    //ACK: Message was received successfully. Green arrow
                     if(messageList.isNotEmpty()) {
                         messageAdapter.showRECEIVEDArrow()
                     }
                     return
                 }
+
                 messageList.add(Message(0, msg))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
 
@@ -232,7 +230,7 @@ class ChatActivity : OptionsMenuActivity() {
         }
     }
 
-    fun checkForNewMessage(): Boolean{
+    private fun checkForNewMessage(): Boolean{
         if(bluetoothService != null){
             if(bluetoothService?.textArray!!.size > 0){
                 return true
@@ -242,7 +240,7 @@ class ChatActivity : OptionsMenuActivity() {
     }
 
     //To close keyboard of EditTexts
-    fun closeKeyboard() {
+    private fun closeKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         //Find the currently focused view
         val view = currentFocus
@@ -251,9 +249,8 @@ class ChatActivity : OptionsMenuActivity() {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
-
-
 }
+
 
 
 
