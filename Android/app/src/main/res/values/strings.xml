@@ -30,6 +30,13 @@
 
     <string name="title_activity_options_menu">OptionsMenuActivity</string>
 
+    <!--Taosts-->
+    <string name="bluetoothIsOff">Bluetooth ist aus</string>
+    <string name="showDevices">Zeige Geräte</string>
+    <string name="disconnected">Verbindung getrennt</string>
+    <string name="connectionEstablished">Verbindung aufgebaut</string>
+    <string name="connectionFailed">Verbindung fehlgeschlagen</string>
+    <string name="missingInputData">Name und/oder Geräteverbindung fehlt</string>
 
 
 </resources>
