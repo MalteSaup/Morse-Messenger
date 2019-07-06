@@ -21,7 +21,6 @@ class MainActivity : OptionsMenuActivity() {
 
     private lateinit var devicesAdapter: DevicesAdapter
     private lateinit var devicesList: ArrayList<BluetoothDevice>
-    private lateinit var btSwitch: Switch
     private var myService: BluetoothConnectionService? = null
     private var bluetoothService: BluetoothService? = null
     private lateinit var bluetoothDevice: BluetoothDevice
@@ -42,7 +41,7 @@ class MainActivity : OptionsMenuActivity() {
 
         bluetoothService = BluetoothService(handler)
 
-        //starts the "BluetoothConnectionService" which is needed to hand over the BluetoothServie to the ChatActivity
+        //starts the "BluetoothConnectionService" which is needed to hand over the BluetoothService to the ChatActivity
         if (!isServiceRunning(BluetoothConnectionService::class.java)) {
 
             val intent = Intent(applicationContext, BluetoothConnectionService::class.java)

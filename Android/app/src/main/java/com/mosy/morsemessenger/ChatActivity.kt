@@ -10,11 +10,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
-import android.util.Log.d
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_chat.*
 import android.view.inputmethod.InputMethodManager
+import android.widget.SeekBar
 
 
 class ChatActivity : OptionsMenuActivity() {
@@ -67,7 +66,7 @@ class ChatActivity : OptionsMenuActivity() {
         //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
         //send username to chat-partner + speed to arduino
         bluetoothService?.write("USR:" + username )
-        Thread.sleep(500);
+        Thread.sleep(500)
         bluetoothService?.write("CLK:" + speed )
 
         bluetoothService?.inChat = true
@@ -92,35 +91,15 @@ class ChatActivity : OptionsMenuActivity() {
         chatBox.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
         chatBox.adapter = messageAdapter
 
-        val intent: Intent = getIntent()
+        val intent: Intent = intent
         username = intent.getStringExtra("username")
         username = deleteSpaceAtEnd(username)
         speed = intent.getStringExtra("speed")
 
         scrollToBottomWhenKeyboardOpen()
-
-        sendButton.setOnClickListener {
-            val textMessage: String = textInput.text.toString()
-
-            //if last chars are spaces: delete spaces
-            text = deleteSpaceAtEnd(textMessage)
-
-            val message = Message(1, text)
-
-            //Message aus text an Arduino senden
-            bluetoothService?.write(text )
-
-            //Update RecyclerView
-            messageList.add(message)
-            messageAdapter.notifyItemInserted(messageList.size - 1)
-
-            //scrolls recyclerView to the bottom
-            chatBox.smoothScrollToPosition(messageList.size);
-
-            //delete text in textInput
-            textInput.setText("")
-            closeKeyboard()
-        }
+        initializeSeekBar()
+        initializeSendButton()
+        initializeRepeatThatButton()
 
         //Checks if messages exist and puts them into messenger
         mHandler = Handler()
@@ -159,10 +138,63 @@ class ChatActivity : OptionsMenuActivity() {
         }
     }
 
+    private fun initializeSeekBar() {
+
+        sendSpeedSBChat.max = 200
+        sendSpeedTVChat.text = sendSpeedSBChat.progress.toString() + " ms"
+
+        sendSpeedSBChat.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                //minimum = 10; (Because api-level <26 sendSpeedSB.min does not work)
+                if (progress <10) {
+                    sendSpeedSBChat.post(Runnable { sendSpeedSBChat.progress = 10 })
+                }
+                sendSpeedTVChat.text = progress.toString() + " ms"
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                bluetoothService?.write("CLK:" + speed )
+            }
+        })
+    }
+
+    private fun initializeSendButton(){
+        sendButton.setOnClickListener {
+            val textMessage: String = textInput.text.toString()
+
+            //if last chars are spaces: delete spaces
+            text = deleteSpaceAtEnd(textMessage)
+
+            val message = Message(1, text)
+
+            //Message aus text an Arduino senden
+            bluetoothService?.write(text )
+
+            //Update RecyclerView
+            messageList.add(message)
+            messageAdapter.notifyItemInserted(messageList.size - 1)
+
+            //scrolls recyclerView to the bottom
+            chatBox.smoothScrollToPosition(messageList.size)
+
+            //delete text in textInput
+            textInput.setText("")
+            closeKeyboard()
+        }
+    }
+
+    private fun initializeRepeatThatButton() {
+        repeatThatBtn.setOnClickListener {
+            bluetoothService?.write("::")
+        }
+    }
+
     private fun scrollToBottomWhenKeyboardOpen () {
         chatBox.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (bottom < oldBottom) {
-                chatBox.postDelayed(Runnable {
+                chatBox.postDelayed({
                     chatBox.smoothScrollToPosition(messageList.size)
                 }, 100)
             }
@@ -181,7 +213,6 @@ class ChatActivity : OptionsMenuActivity() {
                 finish()
             }
         }
-
     }
 
     private fun bluetoothOff(){
@@ -225,7 +256,7 @@ class ChatActivity : OptionsMenuActivity() {
                 messageAdapter.notifyItemInserted(messageList.size - 1)
 
                 //scrolls recyclerView to the bottom
-                chatBox.smoothScrollToPosition(messageList.size);
+                chatBox.smoothScrollToPosition(messageList.size)
             }
         }
     }

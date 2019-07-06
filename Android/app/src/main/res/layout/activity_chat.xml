@@ -13,19 +13,71 @@
             android:layout_height="40dp" android:id="@+id/nameDisplay"
             android:paddingTop="8dp"
             android:paddingBottom="5dp"
-            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
             android:background="@color/colorAccent"
             android:textColor="@color/colorTextW"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" android:textSize="16sp"/>
+            android:textSize="16sp" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout3" app:layout_constraintTop_toTopOf="parent"
+    />
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:paddingBottom="4dp"
+            android:id="@+id/linearLayout3"
+            app:layout_constraintTop_toBottomOf="@+id/nameDisplay">
+        <TextView
+                android:text="@string/speedHeadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:id="@+id/speedTV"
+                android:textColor="@color/colorTextW"
+                android:textSize="18sp"
+                android:layout_weight="1"/>
+        <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout2">
+            <SeekBar
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sendSpeedSBChat"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_weight="1"
+                    android:progress="25" android:max="200"/>
+            <TextView
+                    android:text="ms"
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/sendSpeedTVChat"
+                    app:layout_constraintStart_toEndOf="@+id/btSwitch"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintHorizontal_bias="0.568"
+                    app:layout_constraintTop_toBottomOf="@+id/bluetoothTV"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/colorTextW"
+                    android:textSize="18sp"
+                    android:layout_weight="1"/>
+        </LinearLayout>
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="0dp" android:id="@+id/chatBox"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toTopOf="@+id/sendButton"
-            app:layout_constraintTop_toBottomOf="@+id/nameDisplay">
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
     </android.support.v7.widget.RecyclerView>
     <EditText
             android:layout_width="0dp"
@@ -33,17 +85,33 @@
             android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/textInput"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toStartOf="@+id/sendButton" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="24dp" android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:textColor="@color/colorTextW"/>
+            android:textColor="@color/colorTextW" app:layout_constraintEnd_toStartOf="@+id/sendButton"
+            android:layout_marginEnd="16dp"/>
     <Button
             android:text="@string/sendMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" android:id="@+id/sendButton"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/sendButton"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/buttonshape" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginEnd="24dp" android:textColor="@color/colorTextW"/>
+            android:background="@drawable/buttonshape"
+            android:textColor="@color/colorTextW"
+            app:layout_constraintStart_toEndOf="@+id/textInput"
+            app:layout_constraintEnd_toStartOf="@+id/repeatThatBtn"
+    />
+    <Button
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/repeatThatBtn"
+            android:background="@drawable/buttonshape"
+            android:textColor="@color/colorTextW"
+            app:layout_constraintStart_toEndOf="@+id/sendButton"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent" tools:text="@string/repeatMessage"/>
 </android.support.constraint.ConstraintLayout>
