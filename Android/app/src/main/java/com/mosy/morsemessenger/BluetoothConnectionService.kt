@@ -28,7 +28,7 @@ class BluetoothConnectionService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Toast.makeText(applicationContext, "Gestartet", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, R.string.started, Toast.LENGTH_SHORT).show()
         return super.onStartCommand(intent, flags, startId)
     }
 
