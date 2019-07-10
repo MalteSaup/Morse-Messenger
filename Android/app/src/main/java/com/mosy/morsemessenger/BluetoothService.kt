@@ -167,6 +167,8 @@ class BluetoothService (private val handler: Handler) {
     private fun checkSpecialCharacters (input: String): String {
         var input2 = input
 
+        input2.toLowerCase()
+
         input2 = input2.replace("ü", "ue")
         input2= input2.replace("ä", "ae")
         input2= input2.replace("ö", "oe")
@@ -176,6 +178,16 @@ class BluetoothService (private val handler: Handler) {
         input2= input2.replace("Ö", "Oe")
 
         input2= input2.replace("ß", "ss")
+
+        var i = 0
+
+        while(i < input2.length){
+            var character = input2[i].toInt()
+            if(character != 32 && character != 44 && character != 46 && character != 63 && character !in 58..47 && (character !in 97..122)){
+                input2.removeRange(i, i)
+            }
+            else i++
+        }
 
         return input2
     }
