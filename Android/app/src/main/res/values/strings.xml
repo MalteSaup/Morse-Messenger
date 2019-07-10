@@ -15,7 +15,6 @@
 
     <!--Chat Activity-->
     <string name="sendMessage">Senden</string>
-    <string name="repeatMessage">??</string>
 
     <!--Menu-->
     <string name="rules">Info</string>

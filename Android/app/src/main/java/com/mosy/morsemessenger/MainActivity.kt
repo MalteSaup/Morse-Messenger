@@ -57,7 +57,6 @@ class MainActivity : OptionsMenuActivity() {
 
         implementSwitchOnClickListener()
         initializeBluetoothService()
-        initializeSeekBar()
         disconnectBtn.isClickable = false
 
         //checks with the mRunnable, if bluetooth is enabled and switches the Switch on/off
@@ -119,7 +118,7 @@ class MainActivity : OptionsMenuActivity() {
             isConnected = true
 
             devicesAdapter.changeIcon(bluetoothDevice, isConnected)
-            Toast.makeText(applicationContext, "${R.string.connectionEstablished} ${msg.obj as String}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "Verbunden: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
         }
         else {
             isConnected = false
@@ -302,7 +301,6 @@ class MainActivity : OptionsMenuActivity() {
 
             myService?.setBt(bluetoothService)
             intent.putExtra("username", nameET.text.toString())
-            intent.putExtra("speed", sendSpeedSB.progress.toString())
 
             //starts ChatActivity as a result Activity to catch if Activity was finished trough connection loss or return Button
             startActivityForResult(intent, IF_CONNECTION_IS_LOST)
@@ -310,25 +308,6 @@ class MainActivity : OptionsMenuActivity() {
         else Toast.makeText(applicationContext, R.string.missingInputData, Toast.LENGTH_SHORT).show()
     }
 
-    private fun initializeSeekBar() {
-
-        sendSpeedSB.max = 200
-        sendSpeedTV.text = sendSpeedSB.progress.toString() + " ms"
-
-        sendSpeedSB.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                //minimum = 10; (Because api-level <26 sendSpeedSB.min does not work)
-                if (progress <10) {
-                    sendSpeedSB.post(Runnable { sendSpeedSB.progress = 10 })
-                }
-                sendSpeedTV.text = progress.toString() + " ms"
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-    }
 
     private val myConnection = object : ServiceConnection {
 
@@ -348,6 +327,7 @@ class MainActivity : OptionsMenuActivity() {
 
 /* TODO:
 Prioritäten: 1= sehr wichtig
+- Regex Sonderzeichen rausfiltern außer ? . ,
 - 1 Mechanismus: Erst Name schicken, wenn beide Verbunden sind.
 - Kommentare am Code !!!!!!!!!!!!!!!!!!
 */

@@ -32,48 +32,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content" android:id="@+id/bluetoothTV"
             android:textSize="18sp" android:textColor="@color/colorTextW"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"/>
-    <TextView
-            android:text="@string/speedHeadline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/SpeedTV"
-            android:textColor="@color/colorTextW"
-            app:layout_constraintTop_toBottomOf="@+id/nameET" android:textSize="18sp"
-            android:layout_marginTop="8dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp"/>
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content" app:layout_constraintTop_toBottomOf="@+id/SpeedTV"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:id="@+id/linearLayout2" android:layout_marginTop="-4dp">
-        <SeekBar
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/sendSpeedSB"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="0dp"
-                android:layout_weight="1"
-                android:progress="25" android:max="200"/>
-        <TextView
-                android:text="ms"
-                android:layout_width="10dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/sendSpeedTV"
-                app:layout_constraintStart_toEndOf="@+id/btSwitch"
-                android:layout_marginStart="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintHorizontal_bias="0.568"
-                app:layout_constraintTop_toBottomOf="@+id/bluetoothTV"
-                android:layout_marginTop="4dp"
-                android:textColor="@color/colorTextW"
-                android:textSize="18sp"
-                android:layout_weight="1"/>
-    </LinearLayout>
+            android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/nameET"/>
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

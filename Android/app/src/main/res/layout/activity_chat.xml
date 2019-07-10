@@ -113,5 +113,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent" tools:text="@string/repeatMessage"/>
+            app:layout_constraintBottom_toBottomOf="parent" android:text="Hä"/>
 </android.support.constraint.ConstraintLayout>

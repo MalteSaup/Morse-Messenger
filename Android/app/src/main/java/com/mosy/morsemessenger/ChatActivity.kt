@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_chat.*
 import android.view.inputmethod.InputMethodManager
@@ -62,12 +63,10 @@ class ChatActivity : OptionsMenuActivity() {
 
     fun setBtService(bt: BluetoothService?) {
         bluetoothService = bt
-
-        //TODO: nur am Anfang senden, wenn beide Chat-Partner mit ihren Arduinos verbunden sind
+        
         //send username to chat-partner + speed to arduino
         bluetoothService?.write("USR:" + username )
         Thread.sleep(500)
-        bluetoothService?.write("CLK:" + speed )
 
         bluetoothService?.inChat = true
     }
@@ -94,7 +93,6 @@ class ChatActivity : OptionsMenuActivity() {
         val intent: Intent = intent
         username = intent.getStringExtra("username")
         username = deleteSpaceAtEnd(username)
-        speed = intent.getStringExtra("speed")
 
         scrollToBottomWhenKeyboardOpen()
         initializeSeekBar()
@@ -155,29 +153,35 @@ class ChatActivity : OptionsMenuActivity() {
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                bluetoothService?.write("CLK:" + speed )
+                speed = sendSpeedSBChat.progress.toString()
+                Log.i("TEST", "onStoptrackingTouch  ${speed}")
+                bluetoothService?.write("CLK: ${speed}")
             }
         })
     }
 
     private fun initializeSendButton(){
         sendButton.setOnClickListener {
-            val textMessage: String = textInput.text.toString()
 
-            //if last chars are spaces: delete spaces
-            text = deleteSpaceAtEnd(textMessage)
+            if (text.isNotEmpty()) {
+
+                val textMessage: String = textInput.text.toString()
+
+                //if last chars are spaces: delete spaces
+                text = deleteSpaceAtEnd(textMessage)
 
             val message = Message(1, text)
 
-            //Message aus text an Arduino senden
-            bluetoothService?.write(text )
+                //Message aus text an Arduino senden
+                bluetoothService?.write(text)
 
-            //Update RecyclerView
-            messageList.add(message)
-            messageAdapter.notifyItemInserted(messageList.size - 1)
+                //Update RecyclerView
+                messageList.add(message)
+                messageAdapter.notifyItemInserted(messageList.size - 1)
 
-            //scrolls recyclerView to the bottom
-            chatBox.smoothScrollToPosition(messageList.size)
+                //scrolls recyclerView to the bottom
+                chatBox.smoothScrollToPosition(messageList.size)
+            }
 
             //delete text in textInput
             textInput.setText("")
@@ -223,19 +227,16 @@ class ChatActivity : OptionsMenuActivity() {
     }
 
     private fun receiveTextFromOtherDevice(msg : String) {
-        if(!msg.isBlank()){
 
-            if(msg.length > 1){
+        var msg2 = msg
 
-                //checks if message is username of chat-partner
-                if (msg.contains("USR:", ignoreCase = true)) {
+        if(!msg2.isBlank()){
 
-                    //sets username of chat-partner
-                    var nameString: String = msg.removePrefix("USR:")
-                    nameDisplay.text = nameString
-                    return
-                }
-                if (msg.contentEquals("SENT:") ){
+            if(msg2.length > 1){
+                Log.i("Message1", msg2.toString() +" start")
+
+
+                if (msg2.contentEquals("SENT:") ){
 
                     //SENT: Message was sent successfully. White arrow
                     if(messageList.isNotEmpty()) {
@@ -243,7 +244,7 @@ class ChatActivity : OptionsMenuActivity() {
                     }
                     return
                 }
-                if (msg.contentEquals("ACK:")){
+                if (msg2.contentEquals("ACK:")){
 
                     //ACK: Message was received successfully. Green arrow
                     if(messageList.isNotEmpty()) {
@@ -251,8 +252,27 @@ class ChatActivity : OptionsMenuActivity() {
                     }
                     return
                 }
+                if(msg2.contains("SENT:") || msg2.contains("ACK:")){
+                    Log.i("Message1", msg + " before removeACK")
+                    msg2 = msg2.replace("SENT:", "")
+                    msg2 = msg2.replace("ACK:", "")
+                    msg2 = msg2.replace("\n", "")
+                    Log.i("Message1", msg2 + " after removeACK")
+                    if(msg2.trim().isEmpty()) return
+                }
 
-                messageList.add(Message(0, msg))
+                //checks if message is username of chat-partner
+                if (msg2.contains("USR:", ignoreCase = true)) {
+
+                    //sets username of chat-partner
+                    var nameString: String = msg2.removePrefix("USR:")
+                    nameDisplay.text = nameString
+                    return
+                }
+
+                Log.i("Message1", msg2.toString() +" ende")
+
+                messageList.add(Message(0, msg2))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
 
                 //scrolls recyclerView to the bottom

@@ -88,7 +88,7 @@ class MessageAdapter(private val messageList : ArrayList<Message>) : RecyclerVie
         if (ownMessageList.isNotEmpty()) {
             index = (messageList).indexOf(ownMessageList.last())
         }
-        Log.i("MessageList", (messageList).indexOf(ownMessageList.last()).toString())
+        //Log.i("MessageList", (messageList).indexOf(ownMessageList.last()).toString())
         return index
     }
 
