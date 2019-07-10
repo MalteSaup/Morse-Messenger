@@ -179,11 +179,13 @@ class BluetoothService (private val handler: Handler) {
 
         input2= input2.replace("ß", "ss")
 
+        if(input2[0] == 'u' && input2[0] == 's' && input2[0] == 'r' && input2[0] == ':') return input2
+
         var i = 0
 
         while(i < input2.length){
             var character = input2[i].toInt()
-            if(character != 32 && character != 44 && character != 46 && character != 63 && character !in 58..47 && (character !in 97..122)){
+            if(character != 32 && character != 44 && character != 46 && character != 63 && character !in 58..47 && character !in 97..122){
                 input2.removeRange(i, i)
             }
             else i++
