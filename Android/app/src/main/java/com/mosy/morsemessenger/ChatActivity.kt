@@ -163,24 +163,33 @@ class ChatActivity : OptionsMenuActivity() {
     private fun initializeSendButton(){
         sendButton.setOnClickListener {
 
-            if (text.isNotEmpty()) {
+            if (textInput.text.toString().trim().isNotEmpty()) {
+                var inputString = textInput.text.toString().trim()
+                //filters special characters except .,? öüä
+                var re = Regex("[^A-Za-z0-9. ,?öüäß]")
+                inputString = re.replace(inputString,"")
 
-                val textMessage: String = textInput.text.toString()
+                if(inputString.isNotEmpty()){
+                    val textMessage: String = inputString
 
-                //if last chars are spaces: delete spaces
-                text = deleteSpaceAtEnd(textMessage)
+                    //if last chars are spaces: delete spaces
+                    text = deleteSpaceAtEnd(textMessage)
 
-            val message = Message(1, text)
+                    val message = Message(1, text)
 
-                //Message aus text an Arduino senden
-                bluetoothService?.write(text)
+                    //Message aus text an Arduino senden
+                    bluetoothService?.write(text)
 
-                //Update RecyclerView
-                messageList.add(message)
-                messageAdapter.notifyItemInserted(messageList.size - 1)
+                    //Update RecyclerView
+                    messageList.add(message)
+                    messageAdapter.notifyItemInserted(messageList.size - 1)
 
-                //scrolls recyclerView to the bottom
-                chatBox.smoothScrollToPosition(messageList.size)
+                    //scrolls recyclerView to the bottom
+                    chatBox.smoothScrollToPosition(messageList.size)
+
+
+                }
+
             }
 
             //delete text in textInput
