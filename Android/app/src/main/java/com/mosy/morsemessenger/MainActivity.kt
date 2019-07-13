@@ -81,15 +81,19 @@ class MainActivity : OptionsMenuActivity() {
     //is called when the app returns from the ChatActivity and checks whether Bluetooth Connection was lost or not in ChatActivity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
-        if (requestCode == IF_CONNECTION_IS_LOST && resultCode == Activity.RESULT_OK && data?.getIntExtra("connectionLostState", 0) == 1) {
-                isConnected=false
-                devicesAdapter.changeIcon(bluetoothDevice, isConnected)
+        if (requestCode == IF_CONNECTION_IS_LOST && resultCode == Activity.RESULT_OK && data?.getIntExtra(
+                "connectionLostState",
+                0
+            ) == 1
+        ) {
+            isConnected = false
+            devicesAdapter.changeIcon(bluetoothDevice, isConnected)
         }
     }
 
-    private val handler = object: Handler() {
+    private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
-            when(msg.what){
+            when (msg.what) {
                 MESSAGE_READ -> messageRead(msg)
                 MESSAGE_CONNECTION -> messageConnection(msg)
             }
@@ -97,7 +101,7 @@ class MainActivity : OptionsMenuActivity() {
     }
 
     //Read message from other device
-    fun messageRead(msg: Message){
+    fun messageRead(msg: Message) {
         try {
         } catch (e: UnsupportedEncodingException) {
             e.printStackTrace()
@@ -105,13 +109,13 @@ class MainActivity : OptionsMenuActivity() {
     }
 
     //checks if Bluetooth is enabled
-    private fun checkForBluetooth() : Boolean{
-        if(bluetoothService?.enabled!!) return true
+    private fun checkForBluetooth(): Boolean {
+        if (bluetoothService?.enabled!!) return true
         return false
     }
 
     //Toast if Bluetooth-Connection is established or not
-    fun messageConnection(msg: Message){
+    fun messageConnection(msg: Message) {
 
         if (msg.arg1 == 1) {
             disconnectBtn.isClickable = true
@@ -119,8 +123,7 @@ class MainActivity : OptionsMenuActivity() {
 
             devicesAdapter.changeIcon(bluetoothDevice, isConnected)
             Toast.makeText(applicationContext, "Verbunden: ${msg.obj as String}", Toast.LENGTH_SHORT).show()
-        }
-        else {
+        } else {
             isConnected = false
             Toast.makeText(applicationContext, R.string.connectionFailed, Toast.LENGTH_SHORT).show()
         }
@@ -140,7 +143,7 @@ class MainActivity : OptionsMenuActivity() {
         return false
     }
 
-    private fun initializeBluetoothService(){
+    private fun initializeBluetoothService() {
 
         //Check if Bluetooth is already enabled on device.
         if (bluetoothService?.enabled == true) {
@@ -150,17 +153,17 @@ class MainActivity : OptionsMenuActivity() {
     }
 
     //Listener for Switch-State-Change. To enable and disable bluetooth on device.
-    private fun implementSwitchOnClickListener(){
+    private fun implementSwitchOnClickListener() {
 
-        btSwitch.setOnClickListener{
+        btSwitch.setOnClickListener {
 
-            if(btSwitch.isChecked) bluetoothOn()
+            if (btSwitch.isChecked) bluetoothOn()
             else bluetoothOff()
         }
     }
 
     //Turn Bluetooth On
-    private fun bluetoothOn(){
+    private fun bluetoothOn() {
 
         if (bluetoothService?.enabled == false) {
 
@@ -172,7 +175,7 @@ class MainActivity : OptionsMenuActivity() {
     }
 
     //Turn Bluetooth Off
-    private fun bluetoothOff(){
+    private fun bluetoothOff() {
 
         bluetoothService?.disable()
         devicesList.clear()
@@ -183,33 +186,33 @@ class MainActivity : OptionsMenuActivity() {
     }
 
     //Shows Bluetooth-Devices in list, which have already been connected in the past
-    fun showPairedDevices(view: View){
+    /*fun showPairedDevices(view: View) {
         if (bluetoothService?.enabled!!) {
             for (device in bluetoothService?.pairedDevices!!) {
-               devicesList.add(device)
+                devicesList.add(device)
             }
             // add the name to the list
-            devicesAdapter.notifyItemInserted(devicesList.size -1)
+            devicesAdapter.notifyItemInserted(devicesList.size - 1)
 
             Toast.makeText(applicationContext, R.string.showDevices, Toast.LENGTH_SHORT).show()
         } else
             Toast.makeText(applicationContext, R.string.bluetoothIsOff, Toast.LENGTH_SHORT).show()
-    }
+    }*/
 
     //Find Bluetooth-Devices and show them in List (ClickListener)
-    fun discoverPairedDevices(view: View){
+    fun discoverPairedDevices(view: View) {
         if (bluetoothService?.enabled!!) {
 
             bluetoothService?.discover()
             Toast.makeText(baseContext, R.string.discoverDevices, Toast.LENGTH_SHORT).show()
 
-            val device : BluetoothDevice?
-            if(isConnected) device = devicesList[0]
+            val device: BluetoothDevice?
+            if (isConnected) device = devicesList[0]
             else device = null
 
             devicesList.clear()
 
-            if(device != null) {
+            if (device != null) {
                 devicesList.add(0, device)
                 devicesAdapter.changeIcon(bluetoothDevice, isConnected)
             }
@@ -233,19 +236,19 @@ class MainActivity : OptionsMenuActivity() {
                 val device = intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
 
                 // add the name to the list if it is not already in the list
-                if(!devicesList.contains(device)) {
+                if (!devicesList.contains(device)) {
 
                     devicesAdapter.changeIcon(device, false)
                     devicesList.add(device)
 
-                    devicesAdapter.notifyItemInserted(devicesList.size -1)
+                    devicesAdapter.notifyItemInserted(devicesList.size - 1)
                 }
             }
         }
     }
 
     //Click-Listener for disconnecting all connected Devices
-    fun disconnectDevice (view: View) {
+    fun disconnectDevice(view: View) {
 
         val pairedDevices: Set<BluetoothDevice> = BluetoothAdapter.getDefaultAdapter().bondedDevices
 
@@ -265,7 +268,7 @@ class MainActivity : OptionsMenuActivity() {
     }
 
     //Click-Listener for Device in Devices-RecyclerView. To create connection with Bluetooth-Device.
-    private fun onDeviceClicked (device : BluetoothDevice) {
+    private fun onDeviceClicked(device: BluetoothDevice) {
         bluetoothDevice = device
 
         // Get the device MAC address
@@ -274,11 +277,11 @@ class MainActivity : OptionsMenuActivity() {
         bluetoothService?.connect(macAddress)
 
         //Change Icon in RecyclerView-Element
-        if(device.bondState == BOND_BONDED ) {
+        if (device.bondState == BOND_BONDED) {
 
             //places clicked device on first position in list
-            for(i in 0 until devicesList.size){
-                if(devicesList[i] == device){
+            for (i in 0 until devicesList.size) {
+                if (devicesList[i] == device) {
                     var mDevice = devicesList[i]
                     devicesList[i] = devicesList[0]
                     devicesList[0] = mDevice
@@ -304,8 +307,7 @@ class MainActivity : OptionsMenuActivity() {
 
             //starts ChatActivity as a result Activity to catch if Activity was finished trough connection loss or return Button
             startActivityForResult(intent, IF_CONNECTION_IS_LOST)
-        }
-        else Toast.makeText(applicationContext, R.string.missingInputData, Toast.LENGTH_SHORT).show()
+        } else Toast.makeText(applicationContext, R.string.missingInputData, Toast.LENGTH_SHORT).show()
     }
 
 
@@ -324,10 +326,3 @@ class MainActivity : OptionsMenuActivity() {
         }
     }
 }
-
-/* TODO:
-Prioritäten: 1= sehr wichtig
-- Regex Sonderzeichen rausfiltern außer ? . ,
-- 1 Mechanismus: Erst Name schicken, wenn beide Verbunden sind.
-- Kommentare am Code !!!!!!!!!!!!!!!!!!
-*/

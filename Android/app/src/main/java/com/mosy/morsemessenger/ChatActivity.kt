@@ -18,16 +18,16 @@ import android.widget.SeekBar
 
 
 class ChatActivity : OptionsMenuActivity() {
-    var messageList: ArrayList<Message> = ArrayList()
-    var messageAdapter: MessageAdapter = MessageAdapter(messageList)
-    lateinit var username: String
-    lateinit var speed : String
+    private var messageList: ArrayList<Message> = ArrayList()
+    private var messageAdapter: MessageAdapter = MessageAdapter(messageList)
+    private lateinit var username: String
+    lateinit var speed: String
     var text: String = ""
     private var myService: BluetoothConnectionService? = null
     private var isBound = false
     private var bluetoothService: BluetoothService? = null
-    lateinit var mRunnable: Runnable
-    lateinit var mHandler: Handler
+    private lateinit var mRunnable: Runnable
+    private lateinit var mHandler: Handler
 
     fun isServiceRunning(serviceClass: Class<*>): Boolean {
         val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
@@ -63,9 +63,9 @@ class ChatActivity : OptionsMenuActivity() {
 
     fun setBtService(bt: BluetoothService?) {
         bluetoothService = bt
-        
+
         //send username to chat-partner + speed to arduino
-        bluetoothService?.write("USR:" + username )
+        bluetoothService?.write("USR:" + username)
         Thread.sleep(500)
 
         bluetoothService?.inChat = true
@@ -101,14 +101,14 @@ class ChatActivity : OptionsMenuActivity() {
 
         //Checks if messages exist and puts them into messenger
         mHandler = Handler()
-        mRunnable = Runnable{
-            if(checkForNewMessage()) {
+        mRunnable = Runnable {
+            if (checkForNewMessage()) {
                 for (text in bluetoothService?.textArray!!) {
                     receiveTextFromOtherDevice(text.trim())
                 }
                 bluetoothService?.textArray = ArrayList()
             }
-            if(bluetoothService != null && !bluetoothService?.enabled!!) bluetoothOff()
+            if (bluetoothService != null && !bluetoothService?.enabled!!) bluetoothOff()
 
             mHandler.postDelayed(this.mRunnable, 100)
         }
@@ -121,11 +121,11 @@ class ChatActivity : OptionsMenuActivity() {
 
     }
 
-    private fun deleteSpaceAtEnd(textMessage: String) : String {
+    private fun deleteSpaceAtEnd(textMessage: String): String {
 
-        val charArray : CharArray = textMessage.takeLast(1).toCharArray()
-        val lastChar : Char = charArray[0]
-        val isSpace : Boolean = Character.isWhitespace(lastChar)
+        val charArray: CharArray = textMessage.takeLast(1).toCharArray()
+        val lastChar: Char = charArray[0]
+        val isSpace: Boolean = Character.isWhitespace(lastChar)
 
         return if (isSpace) {
             text = textMessage.dropLast(1)
@@ -145,7 +145,7 @@ class ChatActivity : OptionsMenuActivity() {
 
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 //minimum = 10; (Because api-level <26 sendSpeedSB.min does not work)
-                if (progress <10) {
+                if (progress < 10) {
                     sendSpeedSBChat.post(Runnable { sendSpeedSBChat.progress = 10 })
                 }
                 sendSpeedTVChat.text = progress.toString() + " ms"
@@ -160,16 +160,16 @@ class ChatActivity : OptionsMenuActivity() {
         })
     }
 
-    private fun initializeSendButton(){
+    private fun initializeSendButton() {
         sendButton.setOnClickListener {
 
             if (textInput.text.toString().trim().isNotEmpty()) {
                 var inputString = textInput.text.toString().trim()
                 //filters special characters except .,? öüä
                 var re = Regex("[^A-Za-z0-9. ,?öüäß]")
-                inputString = re.replace(inputString,"")
+                inputString = re.replace(inputString, "")
 
-                if(inputString.isNotEmpty()){
+                if (inputString.isNotEmpty()) {
                     val textMessage: String = inputString
 
                     //if last chars are spaces: delete spaces
@@ -204,7 +204,7 @@ class ChatActivity : OptionsMenuActivity() {
         }
     }
 
-    private fun scrollToBottomWhenKeyboardOpen () {
+    private fun scrollToBottomWhenKeyboardOpen() {
         chatBox.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (bottom < oldBottom) {
                 chatBox.postDelayed({
@@ -215,11 +215,11 @@ class ChatActivity : OptionsMenuActivity() {
     }
 
     // Sends message if bluetooth-connection is lost
-    val mReceiver = object : BroadcastReceiver(){
+    private val mReceiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
             val action = p1?.action
             var device = p1?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)
-            if(ACTION_ACL_DISCONNECTED.equals(action) || ACTION_ACL_DISCONNECT_REQUESTED.equals(action)){
+            if (ACTION_ACL_DISCONNECTED.equals(action) || ACTION_ACL_DISCONNECT_REQUESTED.equals(action)) {
                 val intent = Intent()
                 intent.putExtra("connectionLostState", 1)
                 setResult(Activity.RESULT_OK, intent)
@@ -228,46 +228,46 @@ class ChatActivity : OptionsMenuActivity() {
         }
     }
 
-    private fun bluetoothOff(){
+    private fun bluetoothOff() {
         val intent = Intent()
         intent.putExtra("connectionLostState", 1)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
 
-    private fun receiveTextFromOtherDevice(msg : String) {
+    private fun receiveTextFromOtherDevice(msg: String) {
 
         var msg2 = msg
 
-        if(!msg2.isBlank()){
+        if (!msg2.isBlank()) {
 
-            if(msg2.length > 1){
-                Log.i("Message1", msg2.toString() +" start")
+            if (msg2.length > 1) {
+                Log.i("Message1", msg2.toString() + " start")
 
 
-                if (msg2.contentEquals("SENT:") ){
+                if (msg2.contentEquals("SENT:")) {
 
                     //SENT: Message was sent successfully. White arrow
-                    if(messageList.isNotEmpty()) {
+                    if (messageList.isNotEmpty()) {
                         messageAdapter.showSENTArrow()
                     }
                     return
                 }
-                if (msg2.contentEquals("ACK:")){
+                if (msg2.contentEquals("ACK:")) {
 
                     //ACK: Message was received successfully. Green arrow
-                    if(messageList.isNotEmpty()) {
+                    if (messageList.isNotEmpty()) {
                         messageAdapter.showRECEIVEDArrow()
                     }
                     return
                 }
-                if(msg2.contains("SENT:") || msg2.contains("ACK:")){
+                if (msg2.contains("SENT:") || msg2.contains("ACK:")) {
                     Log.i("Message1", msg + " before removeACK")
                     msg2 = msg2.replace("SENT:", "")
                     msg2 = msg2.replace("ACK:", "")
                     msg2 = msg2.replace("\n", "")
                     Log.i("Message1", msg2 + " after removeACK")
-                    if(msg2.trim().isEmpty()) return
+                    if (msg2.trim().isEmpty()) return
                 }
 
                 //checks if message is username of chat-partner
@@ -279,7 +279,7 @@ class ChatActivity : OptionsMenuActivity() {
                     return
                 }
 
-                Log.i("Message1", msg2.toString() +" ende")
+                Log.i("Message1", msg2.toString() + " ende")
 
                 messageList.add(Message(0, msg2))
                 messageAdapter.notifyItemInserted(messageList.size - 1)
@@ -290,9 +290,9 @@ class ChatActivity : OptionsMenuActivity() {
         }
     }
 
-    private fun checkForNewMessage(): Boolean{
-        if(bluetoothService != null){
-            if(bluetoothService?.textArray!!.size > 0){
+    private fun checkForNewMessage(): Boolean {
+        if (bluetoothService != null) {
+            if (bluetoothService?.textArray!!.size > 0) {
                 return true
             }
         }

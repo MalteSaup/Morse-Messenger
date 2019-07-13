@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 
 
-
 import kotlinx.android.synthetic.main.dialog_rules.view.*
 
 open class OptionsMenuActivity : AppCompatActivity() {
@@ -32,7 +31,7 @@ open class OptionsMenuActivity : AppCompatActivity() {
         }
     }
 
-    fun showRulesDialog () {
+    private fun showRulesDialog() {
         //Inflate the dialog with custom view
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_rules, null)
         //AlertDialogBuilder

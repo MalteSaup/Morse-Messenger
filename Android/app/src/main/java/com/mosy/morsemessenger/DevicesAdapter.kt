@@ -9,18 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.bluetooth_list_item.view.*
 
-class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>, val clickListener: (BluetoothDevice) -> Unit) : RecyclerView.Adapter<DevicesAdapter.ViewHolder>() {
+class DevicesAdapter(private val devicesList: ArrayList<BluetoothDevice>, private val clickListener: (BluetoothDevice) -> Unit) :
+    RecyclerView.Adapter<DevicesAdapter.ViewHolder>() {
 
     var isConnected: Boolean = false
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(devicesList[position], clickListener)
 
-        if(isConnected == false) {
+        if (!isConnected) {
             holder.bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
             Log.i("DEVICE", "not Connected 24dp")
-        }
-        else {
+        } else {
             holder.bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
             Log.i("DEVICE", "isConnected connected_24dp")
         }
@@ -28,7 +28,7 @@ class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>, val clickList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent?.context).inflate(R.layout.bluetooth_list_item, parent, false)
-        return ViewHolder (v)
+        return ViewHolder(v)
     }
 
     override fun getItemCount(): Int {
@@ -41,12 +41,13 @@ class DevicesAdapter(val devicesList : ArrayList<BluetoothDevice>, val clickList
         notifyItemChanged(index)
     }
 
-    class ViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind (device : BluetoothDevice, clickListener: (BluetoothDevice) -> Unit) {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var bluetoothImage = itemView.bluetoothImage
+
+        fun bind(device: BluetoothDevice, clickListener: (BluetoothDevice) -> Unit) {
             itemView.deviceNameTV.text = device.name
             itemView.deviceMacTV.text = device.address.toString()
-            itemView.setOnClickListener{clickListener (device)}
+            itemView.setOnClickListener { clickListener(device) }
         }
-            var bluetoothImage = itemView.bluetoothImage
     }
 }

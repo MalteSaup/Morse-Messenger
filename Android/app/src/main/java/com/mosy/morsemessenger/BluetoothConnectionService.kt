@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Toast
 import java.io.UnsupportedEncodingException
 
+
 //Background Service which is used to hand over the BluetoothService from the MainActivity to the ChatActivity
 class BluetoothConnectionService : Service() {
 
@@ -18,7 +19,7 @@ class BluetoothConnectionService : Service() {
 
 
     inner class MyLocalBinder : Binder() {
-        fun getService() : BluetoothConnectionService? {
+        fun getService(): BluetoothConnectionService? {
             return this@BluetoothConnectionService
         }
     }
@@ -31,7 +32,7 @@ class BluetoothConnectionService : Service() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    fun setBt(bluetoothService: BluetoothService?){
+    fun setBt(bluetoothService: BluetoothService?) {
         this.bluetoothService = bluetoothService
     }
 
@@ -39,4 +40,5 @@ class BluetoothConnectionService : Service() {
         return bluetoothService
     }
 }
+
 

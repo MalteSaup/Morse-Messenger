@@ -10,26 +10,25 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
 
+
 const val REQUEST_ENABLE_BT = 1
 const val TAG = "Bluetooth"
 const val MESSAGE_READ: Int = 0
 const val MESSAGE_CONNECTION: Int = 1
-const val MESSAGE_STATUS: Int = 2
 
-class BluetoothService (private val handler: Handler) {
+
+class BluetoothService(private val handler: Handler) {
 
     var textArray: ArrayList<String> = ArrayList()
     var inChat = false
-    var message = Message(1,"")
     val MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     val pairedDevices: Set<BluetoothDevice>? = bluetoothAdapter?.bondedDevices
     val enabled: Boolean? get() = bluetoothAdapter?.isEnabled
     private var connectedThread: ConnectedThread? = null
 
-    init{}
 
-    fun disable(){
+    fun disable() {
         bluetoothAdapter?.disable()
     }
 
@@ -49,7 +48,7 @@ class BluetoothService (private val handler: Handler) {
         if (device != null) connectedThread?.cancel()
     }
 
-    fun discover(){
+    fun discover() {
         bluetoothAdapter?.startDiscovery()
     }
 
@@ -57,7 +56,7 @@ class BluetoothService (private val handler: Handler) {
 
         var socket: BluetoothSocket? = null
 
-        override fun run(){
+        override fun run() {
             var fail = false
 
             try {
@@ -125,7 +124,10 @@ class BluetoothService (private val handler: Handler) {
 
                 stringBuilder.append(mmBuffer.toString(Charsets.UTF_8).substring(0, numBytes))
 
-                if(inChat && stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith("\n")){
+                if (inChat && stringBuilder.isNotEmpty() && stringBuilder.toString().length > 1 && stringBuilder.endsWith(
+                        "\n"
+                    )
+                ) {
                     textArray.add(stringBuilder.toString())
                     stringBuilder.clear()
                 }
@@ -152,7 +154,7 @@ class BluetoothService (private val handler: Handler) {
     }
 
     fun write(input: String) {
-        val inputNoSpecialChars : String = checkSpecialCharacters(input)
+        val inputNoSpecialChars: String = checkSpecialCharacters(input)
         val sendString = inputNoSpecialChars.toUpperCase() + "\n"
         val bytes = sendString.toByteArray() //converts entered String into bytes
 
@@ -164,31 +166,30 @@ class BluetoothService (private val handler: Handler) {
     }
 
     //converts special characters, which morse code does not implement
-    private fun checkSpecialCharacters (input: String): String {
+    private fun checkSpecialCharacters(input: String): String {
         var input2 = input
 
         input2.toLowerCase()
 
         input2 = input2.replace("ü", "ue")
-        input2= input2.replace("ä", "ae")
-        input2= input2.replace("ö", "oe")
+        input2 = input2.replace("ä", "ae")
+        input2 = input2.replace("ö", "oe")
 
         input2 = input2.replace("Ü", "Ue")
-        input2= input2.replace("Ä", "Ae")
-        input2= input2.replace("Ö", "Oe")
+        input2 = input2.replace("Ä", "Ae")
+        input2 = input2.replace("Ö", "Oe")
 
-        input2= input2.replace("ß", "ss")
+        input2 = input2.replace("ß", "ss")
 
-        if(input2[0] == 'u' && input2[0] == 's' && input2[0] == 'r' && input2[0] == ':') return input2
+        if (input2[0] == 'u' && input2[0] == 's' && input2[0] == 'r' && input2[0] == ':') return input2
 
         var i = 0
 
-        while(i < input2.length){
+        while (i < input2.length) {
             var character = input2[i].toInt()
-            if(character != 32 && character != 44 && character != 46 && character != 63 && character !in 58..47 && character !in 97..122){
+            if (character != 32 && character != 44 && character != 46 && character != 63 && character !in 58..47 && character !in 97..122) {
                 input2.removeRange(i, i)
-            }
-            else i++
+            } else i++
         }
 
         return input2
