@@ -2,7 +2,6 @@ package com.mosy.morsemessenger
 
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -86,7 +85,6 @@ class MessageAdapter(private val messageList: ArrayList<Message>) : RecyclerView
         if (ownMessageList.isNotEmpty()) {
             index = (messageList).indexOf(ownMessageList.last())
         }
-        //Log.i("MessageList", (messageList).indexOf(ownMessageList.last()).toString())
         return index
     }
 
@@ -95,7 +93,6 @@ class MessageAdapter(private val messageList: ArrayList<Message>) : RecyclerView
 
         itemVisible = true
         itemReceived = false
-        Log.i("MessageList", "SENT")
         notifyItemChanged(index)
     }
 
@@ -104,7 +101,6 @@ class MessageAdapter(private val messageList: ArrayList<Message>) : RecyclerView
 
         itemVisible = true
         itemReceived = true
-        Log.i("MessageList", "ACK")
         notifyItemChanged(index)
     }
 

@@ -3,13 +3,15 @@ package com.mosy.morsemessenger
 
 import android.bluetooth.BluetoothDevice
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.bluetooth_list_item.view.*
 
-class DevicesAdapter(private val devicesList: ArrayList<BluetoothDevice>, private val clickListener: (BluetoothDevice) -> Unit) :
+class DevicesAdapter(
+    private val devicesList: ArrayList<BluetoothDevice>,
+    private val clickListener: (BluetoothDevice) -> Unit
+) :
     RecyclerView.Adapter<DevicesAdapter.ViewHolder>() {
 
     var isConnected: Boolean = false
@@ -17,17 +19,16 @@ class DevicesAdapter(private val devicesList: ArrayList<BluetoothDevice>, privat
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(devicesList[position], clickListener)
 
+        //change Image of device to signalize if it is connected or not
         if (!isConnected) {
             holder.bluetoothImage.setImageResource(R.drawable.ic_bluetooth_24dp)
-            Log.i("DEVICE", "not Connected 24dp")
         } else {
             holder.bluetoothImage.setImageResource(R.drawable.ic_bluetooth_connected_24dp)
-            Log.i("DEVICE", "isConnected connected_24dp")
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val v = LayoutInflater.from(parent?.context).inflate(R.layout.bluetooth_list_item, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.bluetooth_list_item, parent, false)
         return ViewHolder(v)
     }
 
@@ -44,6 +45,7 @@ class DevicesAdapter(private val devicesList: ArrayList<BluetoothDevice>, privat
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var bluetoothImage = itemView.bluetoothImage
 
+        //fills view with device-content and binds device to clickListener in RecyclerView
         fun bind(device: BluetoothDevice, clickListener: (BluetoothDevice) -> Unit) {
             itemView.deviceNameTV.text = device.name
             itemView.deviceMacTV.text = device.address.toString()

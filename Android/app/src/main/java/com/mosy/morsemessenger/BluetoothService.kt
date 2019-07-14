@@ -32,6 +32,7 @@ class BluetoothService(private val handler: Handler) {
         bluetoothAdapter?.disable()
     }
 
+    //connect Device
     fun connect(macAddress: String) {
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
 
@@ -41,7 +42,7 @@ class BluetoothService(private val handler: Handler) {
         }
 
     }
-
+    //disconnect Device
     fun disconnect(macAddress: String) {
         val device = bluetoothAdapter?.getRemoteDevice(macAddress)
 

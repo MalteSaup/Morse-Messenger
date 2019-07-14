@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.widget.LinearLayout
 import kotlinx.android.synthetic.main.activity_chat.*
 import android.view.inputmethod.InputMethodManager
@@ -43,6 +42,7 @@ class ChatActivity : OptionsMenuActivity() {
         return false
     }
 
+    //saves connection to BluetoothConnectionsService in variable for keeping the bluetooth-connection while switching activities
     private val myConnection = object : ServiceConnection {
         override fun onServiceConnected(
             className: ComponentName,
@@ -121,6 +121,7 @@ class ChatActivity : OptionsMenuActivity() {
 
     }
 
+    //secures that there is no space at the end of a message
     private fun deleteSpaceAtEnd(textMessage: String): String {
 
         val charArray: CharArray = textMessage.takeLast(1).toCharArray()
@@ -154,7 +155,6 @@ class ChatActivity : OptionsMenuActivity() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 speed = sendSpeedSBChat.progress.toString()
-                Log.i("TEST", "onStoptrackingTouch  ${speed}")
                 bluetoothService?.write("CLK: ${speed}")
             }
         })
@@ -165,7 +165,7 @@ class ChatActivity : OptionsMenuActivity() {
 
             if (textInput.text.toString().trim().isNotEmpty()) {
                 var inputString = textInput.text.toString().trim()
-                //filters special characters except .,? öüä
+                //filters special characters except .,? öüäß
                 var re = Regex("[^A-Za-z0-9. ,?öüäß]")
                 inputString = re.replace(inputString, "")
 
@@ -177,10 +177,10 @@ class ChatActivity : OptionsMenuActivity() {
 
                     val message = Message(1, text)
 
-                    //Message aus text an Arduino senden
+                    //send text from message to arduino
                     bluetoothService?.write(text)
 
-                    //Update RecyclerView
+                    //update RecyclerView with new message
                     messageList.add(message)
                     messageAdapter.notifyItemInserted(messageList.size - 1)
 
@@ -198,12 +198,14 @@ class ChatActivity : OptionsMenuActivity() {
         }
     }
 
+    //if button is pressed, arduino sends last message again
     private fun initializeRepeatThatButton() {
         repeatThatBtn.setOnClickListener {
             bluetoothService?.write("::")
         }
     }
 
+    //recyclerView scrolls to bottom, when keyboard is opened
     private fun scrollToBottomWhenKeyboardOpen() {
         chatBox.addOnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             if (bottom < oldBottom) {
@@ -242,8 +244,6 @@ class ChatActivity : OptionsMenuActivity() {
         if (!msg2.isBlank()) {
 
             if (msg2.length > 1) {
-                Log.i("Message1", msg2.toString() + " start")
-
 
                 if (msg2.contentEquals("SENT:")) {
 
@@ -260,13 +260,12 @@ class ChatActivity : OptionsMenuActivity() {
                         messageAdapter.showRECEIVEDArrow()
                     }
                     return
-                }
+                } //sometimes message contains messagetext and SENT: or ACK: -> filter this out of the message
                 if (msg2.contains("SENT:") || msg2.contains("ACK:")) {
-                    Log.i("Message1", msg + " before removeACK")
                     msg2 = msg2.replace("SENT:", "")
                     msg2 = msg2.replace("ACK:", "")
                     msg2 = msg2.replace("\n", "")
-                    Log.i("Message1", msg2 + " after removeACK")
+
                     if (msg2.trim().isEmpty()) return
                 }
 
@@ -278,8 +277,6 @@ class ChatActivity : OptionsMenuActivity() {
                     nameDisplay.text = nameString
                     return
                 }
-
-                Log.i("Message1", msg2.toString() + " ende")
 
                 messageList.add(Message(0, msg2))
                 messageAdapter.notifyItemInserted(messageList.size - 1)

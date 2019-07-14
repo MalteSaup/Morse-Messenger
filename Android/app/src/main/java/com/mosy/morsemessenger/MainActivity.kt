@@ -305,12 +305,12 @@ class MainActivity : OptionsMenuActivity() {
             myService?.setBt(bluetoothService)
             intent.putExtra("username", nameET.text.toString())
 
-            //starts ChatActivity as a result Activity to catch if Activity was finished trough connection loss or return Button
+            //starts ChatActivity as next Activity to catch if Activity was destroyed through connection loss or return Button
             startActivityForResult(intent, IF_CONNECTION_IS_LOST)
         } else Toast.makeText(applicationContext, R.string.missingInputData, Toast.LENGTH_SHORT).show()
     }
 
-
+    //saves connection to BluetoothConnectionsService in variable for keeping the bluetooth-connection while switching activities
     private val myConnection = object : ServiceConnection {
 
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
